@@ -320,6 +320,7 @@ document.getElementById("loginCard").style.display = "none";
 document.getElementById("dashboard").style.display = "block";
 refreshBtn.style.display = "";
 exportBtn.style.display = "";
+exportBtn.addEventListener("click", exportCSV);
 loadResponses();
 
 async function loadResponses(){
