@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Academy | Season 2 Sports Interest</title>
+<style>
+:root{
+  --purple:#5b2a86;
+  --purple-dark:#35164f;
+  --purple-light:#8b5bc2;
+  --gold:#f2c14e;
+  --bg:#f5f4f8;
+  --card:#ffffff;
+  --ink:#1f2430;
+  --muted:#687083;
+  --border:#ded9e8;
+  --green:#15845c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at top right,rgba(139,91,194,.18),transparent 28rem),
+    linear-gradient(180deg,#ede7f4 0,#f7f7fa 22rem);
+  color:var(--ink);
+}
+.page{
+  width:min(960px,calc(100% - 28px));
+  margin:28px auto 60px;
+}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  background:linear-gradient(135deg,var(--purple-dark),var(--purple) 55%,var(--purple-light));
+  color:#fff;
+  padding:32px 30px;
+  box-shadow:0 18px 48px rgba(52,26,78,.22);
+}
+.hero:before,.hero:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.hero:before{width:260px;height:260px;right:-90px;top:-120px}
+.hero:after{width:150px;height:150px;right:80px;bottom:-95px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.24);
+  background:rgba(255,255,255,.10);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.hero h1{
+  margin:12px 0 8px;
+  font-size:clamp(30px,6vw,50px);
+  line-height:1;
+}
+.hero p{
+  max-width:720px;
+  margin:0;
+  line-height:1.55;
+  color:#f3edf8;
+}
+.alert{
+  margin-top:16px;
+  border:1px solid #ead59c;
+  border-radius:15px;
+  background:#fff8df;
+  color:#624e10;
+  padding:13px 15px;
+  font-size:14px;
+  font-weight:700;
+}
+form{
+  display:grid;
+  gap:18px;
+  margin-top:18px;
+}
+.card{
+  padding:22px;
+  border-radius:20px;
+  background:var(--card);
+  border:1px solid var(--border);
+  box-shadow:0 8px 26px rgba(31,36,48,.055);
+}
+.card h2{
+  margin:0 0 5px;
+  font-size:20px;
+  color:var(--purple-dark);
+}
+.card .intro{
+  margin:0 0 18px;
+  color:var(--muted);
+  font-size:14px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.full{grid-column:1/-1}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  font-size:14px;
+  font-weight:800;
+}
+.field span.optional{
+  font-weight:500;
+  color:var(--muted);
+}
+input,select,textarea{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #cfc9d9;
+  border-radius:12px;
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
+  outline:none;
+  transition:.18s ease;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--purple-light);
+  box-shadow:0 0 0 4px rgba(91,42,134,.10);
+}
+textarea{min-height:90px;resize:vertical}
+.group-title{
+  margin:18px 0 9px;
+  font-size:14px;
+  font-weight:900;
+  color:#4b2b66;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.sports{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.sport{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 13px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#faf9fc;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.sport:hover{
+  border-color:#bca7d4;
+  background:#fcfaff;
+}
+.sport input{
+  width:18px;
+  height:18px;
+  margin-top:1px;
+  accent-color:var(--purple);
+  flex:0 0 auto;
+}
+.sport strong{display:block;font-size:14px}
+.sport small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.hidden{display:none!important}
+.choice-note{
+  margin:11px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.inline-options{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:9px 12px;
+  background:#fafafa;
+  font-size:13px;
+  font-weight:750;
+  cursor:pointer;
+}
+.pill input{
+  width:16px;height:16px;margin:0;accent-color:var(--purple)
+}
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+button{
+  appearance:none;
+  border:0;
+  border-radius:13px;
+  padding:13px 18px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+}
+button.primary{background:var(--purple);color:#fff}
+button.primary:hover{background:#48206c}
+button.secondary{background:#ece9f0;color:#4b4056}
+#message{
+  display:none;
+  margin-top:14px;
+  padding:14px 15px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:750;
+}
+#message.success{
+  display:block;
+  background:#eaf8f1;
+  border:1px solid #b9e5cf;
+  color:var(--green);
+}
+#message.error{
+  display:block;
+  background:#fff0f0;
+  border:1px solid #f0c5c5;
+  color:#9f2f2f;
+}
+.footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:18px;
+}
+@media(max-width:700px){
+  .page{width:min(100% - 18px,960px);margin-top:12px}
+  .hero{padding:25px 20px;border-radius:20px}
+  .card{padding:18px}
+  .grid,.sports{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="hero">
+    <div class="badge">Explore Academy Athletics</div>
+    <h1>Season 2 Sports Interest</h1>
+    <p>
+      Help us determine which Season 2 teams have enough student interest to move forward.
+      Students may select more than one sport they would seriously consider participating in.
+    </p>
+  </section>
+
+  <div class="alert">
+    Interest only: submitting this form does not guarantee that a team will be offered or that a student has a roster spot.
+  </div>
+
+  <form id="sportsForm">
+    <section class="card">
+      <h2>Student Information</h2>
+      <p class="intro">Please use the student's current grade for the 2026–27 school year.</p>
+      <div class="grid">
+        <label class="field full">
+          Student Name *
+          <select name="studentName" id="studentName" required>
+            <option value="">Choose your name</option>
+            <optgroup label="Grades 4–5">
+              <option value="Kataleya Eichberger">Kataleya Eichberger</option>
+              <option value="Damian Haro">Damian Haro</option>
+              <option value="Grayson Johnert">Grayson Johnert</option>
+              <option value="Jeshua Morris">Jeshua Morris</option>
+              <option value="Nala Parker">Nala Parker</option>
+              <option value="Niyane Parker">Niyane Parker</option>
+              <option value="Tristan Ruth">Tristan Ruth</option>
+              <option value="Samuel Seeker">Samuel Seeker</option>
+              <option value="Frank Sheldone">Frank Sheldone</option>
+              <option value="Christian Smith">Christian Smith</option>
+              <option value="Kade Stula">Kade Stula</option>
+              <option value="Marli Thompson">Marli Thompson</option>
+              <option value="Alaina Wilson">Alaina Wilson</option>
+              <option value="Sulaiman Abdulle">Sulaiman Abdulle</option>
+              <option value="Alejandro Brito-Rivera">Alejandro Brito-Rivera</option>
+              <option value="Zander Carmack">Zander Carmack</option>
+              <option value="Abigail Conner">Abigail Conner</option>
+              <option value="Joshua Giddens">Joshua Giddens</option>
+              <option value="Harrison Hall">Harrison Hall</option>
+              <option value="Aliya Montchery">Aliya Montchery</option>
+              <option value="Caleb Pelkey">Caleb Pelkey</option>
+              <option value="Jacob Perez">Jacob Perez</option>
+              <option value="Krystal Thompson">Krystal Thompson</option>
+              <option value="Lilian Walbecq">Lilian Walbecq</option>
+              <option value="Whitney Wright">Whitney Wright</option>
+              <option value="Larissa Almazo">Larissa Almazo</option>
+            </optgroup>
+            <optgroup label="Middle School">
+              <option value="Leonardo Aclopotoaei">Leonardo Aclopotoaei</option>
+              <option value="Luxanna Argueta">Luxanna Argueta</option>
+              <option value="Elijah Daniels">Elijah Daniels</option>
+              <option value="Howard Harris">Howard Harris</option>
+              <option value="Alden Joseph">Alden Joseph</option>
+              <option value="Zariah Martens">Zariah Martens</option>
+              <option value="Kilian Moore">Kilian Moore</option>
+              <option value="Rylee Olson">Rylee Olson</option>
+              <option value="Celestina Perez">Celestina Perez</option>
+              <option value="Zuri Radford">Zuri Radford</option>
+              <option value="Rebelle Sheldone">Rebelle Sheldone</option>
+              <option value="Andi Woods">Andi Woods</option>
+              <option value="Wyatt Crawford">Wyatt Crawford</option>
+              <option value="Chelsea Crick">Chelsea Crick</option>
+              <option value="Gabrielle Pelkey">Gabrielle Pelkey</option>
+              <option value="Sadie Tharp">Sadie Tharp</option>
+              <option value="Avery Woods">Avery Woods</option>
+              <option value="Samuel Annor">Samuel Annor</option>
+              <option value="Rhylan Becker">Rhylan Becker</option>
+              <option value="Oliver Coble">Oliver Coble</option>
+              <option value="Elijah Collinsworth">Elijah Collinsworth</option>
+              <option value="Emma Doan">Emma Doan</option>
+              <option value="Gavin Giles">Gavin Giles</option>
+              <option value="Jeslynn Guerrero">Jeslynn Guerrero</option>
+              <option value="Adalia Joseph">Adalia Joseph</option>
+              <option value="Nathanael Perez">Nathanael Perez</option>
+              <option value="Jonah Ponseti">Jonah Ponseti</option>
+              <option value="Antoine Roberts">Antoine Roberts</option>
+              <option value="Sergey Shimunov">Sergey Shimunov</option>
+              <option value="Molly Smithson">Molly Smithson</option>
+              <option value="Anthony Stewart">Anthony Stewart</option>
+              <option value="Landon Stula">Landon Stula</option>
+              <option value="Dante Yazzie">Dante Yazzie</option>
+              <option value="Daynell Yazzie">Daynell Yazzie</option>
+            </optgroup>
+          </select>
+          <input type="hidden" name="firstName" id="firstName">
+          <input type="hidden" name="lastName" id="lastName">
+        </label>
+
+        <label class="field">
+          Grade *
+          <select name="grade" id="grade" required>
+            <option value="">Choose grade</option>
+            <option value="4">4th Grade</option>
+            <option value="5">5th Grade</option>
+            <option value="6">6th Grade</option>
+            <option value="7">7th Grade</option>
+            <option value="8">8th Grade</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Student Gender *
+          <select name="gender" id="gender" required>
+            <option value="">Choose one</option>
+            <option value="Boy">Boy</option>
+            <option value="Girl">Girl</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Homeroom / Teacher <span class="optional">(optional)</span>
+          <input type="text" name="teacher">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sports Interest</h2>
+      <p class="intro">
+        Choose your <strong>first-choice sport</strong> and, if you want, <strong>one backup choice</strong>.
+        You may select a maximum of two sports.
+      </p>
+
+      <div class="alert" style="margin:0 0 18px">
+        <strong>Important:</strong> Teams depend on student interest and roster numbers. Your first choice is the sport you most want to play.
+        A second choice is only a backup and does not guarantee placement. Selecting more sports does not increase your chance of getting your preferred team.
+      </div>
+
+      <div id="availableSports">
+        <div class="group-title">Available for Your Grade</div>
+        <div class="sports">
+
+          <label class="sport" data-min-grade="5" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="IYAC Coed Flag Football - Grades 5-8">
+            <span>
+              <strong>IYAC Coed Flag Football</strong>
+              <small>Grades 5–8 • Boys & Girls play together</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="boy">
+            <input type="checkbox" name="sports" value="CAA Boys Volleyball">
+            <span>
+              <strong>CAA Boys Volleyball</strong>
+              <small>Grades 4–8 • Boys • 6th-grade team placement will be determined after interest numbers are reviewed</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="5" data-gender="girl">
+            <input type="checkbox" name="sports" value="CAA Girls Flag Football - Grades 4-5">
+            <span>
+              <strong>CAA Girls Flag Football</strong>
+              <small>Grades 4–5 • Girls</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Esports Mario Kart - Grades 4-8">
+            <span>
+              <strong>Esports: Mario Kart</strong>
+              <small>Grades 4–8 • Internal program • Coed</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Esports Smash Bros - Grades 4-8">
+            <span>
+              <strong>Esports: Smash Bros.</strong>
+              <small>Grades 4–8 • Internal program • Coed</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Chess - Grades 4-8">
+            <span><strong>Chess</strong><small>Grades 4–8 • Internal program • Coed</small></span>
+          </label>
+
+        </div>
+      </div>
+
+      <p class="choice-note" id="gradeHint">
+        Your choices update automatically based on grade and gender.
+      </p>
+      <div id="sportLimitMessage" class="status error" style="display:none"></div>
+    </section>
+
+    <section class="card">
+      <h2>Your Interest Level</h2>
+      <p class="intro">This helps separate “that sounds neat” from “I would actually show up to practice.” A surprisingly useful distinction.</p>
+
+      <div class="grid">
+        <label class="field full">
+          What is your FIRST choice? *
+          <select name="firstChoice" id="firstChoice" required>
+            <option value="">Select a sport first</option>
+          </select>
+        </label>
+
+        <label class="field full">
+          How likely would you be to join if this sport is offered? *
+          <div class="inline-options">
+            <label class="pill"><input type="radio" name="likelihood" value="Definitely" required> Definitely</label>
+            <label class="pill"><input type="radio" name="likelihood" value="Probably"> Probably</label>
+            <label class="pill"><input type="radio" name="likelihood" value="Maybe"> Maybe</label>
+          </div>
+        </label>
+
+        <label class="field">
+          Sports Experience *
+          <select name="experience" required>
+            <option value="">Choose one</option>
+            <option>No experience</option>
+            <option>Some recreational experience</option>
+            <option>Played on a school or club team</option>
+            <option>Several seasons of competitive experience</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Would you be willing to try a new sport?
+          <select name="newSport">
+            <option value="">Choose one</option>
+            <option>Yes</option>
+            <option>Maybe</option>
+            <option>No</option>
+          </select>
+        </label>
+
+        <label class="field full">
+          Comments <span class="optional">(optional)</span>
+          <textarea name="comments" placeholder="Positions played, prior experience, questions, or anything else we should know."></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Submit Interest</h2>
+      <p class="intro">
+        Your response will be used only to estimate participation and plan possible Season 2 teams.
+      </p>
+
+      <label class="pill" style="border-radius:14px;align-items:flex-start">
+        <input type="checkbox" name="accurate" required>
+        <span>I understand this is an interest survey and not official team registration.</span>
+      </label>
+
+      <div class="actions" style="margin-top:18px">
+        <button type="reset" class="secondary">Clear Form</button>
+        <button type="submit" class="primary">Submit Interest</button>
+      </div>
+      <div id="message"></div>
+    </section>
+  </form>
+
+  <div class="footer">Explore Academy • 2026–27 Athletics Interest Survey</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+/*
+  STEP 1:
+  Replace the values below with your Firebase Web App configuration.
+
+  Firebase Console:
+  Project Settings > General > Your apps > Web app > SDK setup and configuration
+
+  The config is safe to place in browser code. Security comes from Firestore
+  Security Rules, not from hiding these values.
+*/
+const firebaseConfig = {
+  apiKey: "AIzaSyCkObP423XCbzHC-wkWqKlH9phDiZBz-BM",
+  authDomain: "explore-sports-interest.firebaseapp.com",
+  projectId: "explore-sports-interest",
+  storageBucket: "explore-sports-interest.firebasestorage.app",
+  messagingSenderId: "617847108980",
+  appId: "1:617847108980:web:4efd00431740d1e03f2821"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let firebaseReady = false;
+
+async function connectFirebase() {
+  try {
+    await signInAnonymously(auth);
+    firebaseReady = true;
+    console.log("Firebase connected.");
+  } catch (error) {
+    console.error("Firebase connection failed:", error);
+  }
+}
+
+connectFirebase();
+
+const form = document.getElementById("sportsForm");
+const studentName = document.getElementById("studentName");
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const grade = document.getElementById("grade");
+const gender = document.getElementById("gender");
+const firstChoice = document.getElementById("firstChoice");
+const message = document.getElementById("message");
+
+function showMessage(text, type) {
+  message.textContent = text;
+  message.className = type;
+}
+
+
+const STATIC_ROSTER = [{"name": "Kataleya Eichberger", "division": "4-5"}, {"name": "Damian Haro", "division": "4-5"}, {"name": "Grayson Johnert", "division": "4-5"}, {"name": "Jeshua Morris", "division": "4-5"}, {"name": "Nala Parker", "division": "4-5"}, {"name": "Niyane Parker", "division": "4-5"}, {"name": "Tristan Ruth", "division": "4-5"}, {"name": "Samuel Seeker", "division": "4-5"}, {"name": "Frank Sheldone", "division": "4-5"}, {"name": "Christian Smith", "division": "4-5"}, {"name": "Kade Stula", "division": "4-5"}, {"name": "Marli Thompson", "division": "4-5"}, {"name": "Alaina Wilson", "division": "4-5"}, {"name": "Sulaiman Abdulle", "division": "4-5"}, {"name": "Alejandro Brito-Rivera", "division": "4-5"}, {"name": "Zander Carmack", "division": "4-5"}, {"name": "Abigail Conner", "division": "4-5"}, {"name": "Joshua Giddens", "division": "4-5"}, {"name": "Harrison Hall", "division": "4-5"}, {"name": "Aliya Montchery", "division": "4-5"}, {"name": "Caleb Pelkey", "division": "4-5"}, {"name": "Jacob Perez", "division": "4-5"}, {"name": "Krystal Thompson", "division": "4-5"}, {"name": "Lilian Walbecq", "division": "4-5"}, {"name": "Whitney Wright", "division": "4-5"}, {"name": "Larissa Almazo", "division": "4-5"}, {"name": "Leonardo Aclopotoaei", "division": "MS"}, {"name": "Luxanna Argueta", "division": "MS"}, {"name": "Elijah Daniels", "division": "MS"}, {"name": "Howard Harris", "division": "MS"}, {"name": "Alden Joseph", "division": "MS"}, {"name": "Zariah Martens", "division": "MS"}, {"name": "Kilian Moore", "division": "MS"}, {"name": "Rylee Olson", "division": "MS"}, {"name": "Celestina Perez", "division": "MS"}, {"name": "Zuri Radford", "division": "MS"}, {"name": "Rebelle Sheldone", "division": "MS"}, {"name": "Andi Woods", "division": "MS"}, {"name": "Wyatt Crawford", "division": "MS"}, {"name": "Chelsea Crick", "division": "MS"}, {"name": "Gabrielle Pelkey", "division": "MS"}, {"name": "Sadie Tharp", "division": "MS"}, {"name": "Avery Woods", "division": "MS"}, {"name": "Samuel Annor", "division": "MS"}, {"name": "Rhylan Becker", "division": "MS"}, {"name": "Oliver Coble", "division": "MS"}, {"name": "Elijah Collinsworth", "division": "MS"}, {"name": "Emma Doan", "division": "MS"}, {"name": "Gavin Giles", "division": "MS"}, {"name": "Jeslynn Guerrero", "division": "MS"}, {"name": "Adalia Joseph", "division": "MS"}, {"name": "Nathanael Perez", "division": "MS"}, {"name": "Jonah Ponseti", "division": "MS"}, {"name": "Antoine Roberts", "division": "MS"}, {"name": "Sergey Shimunov", "division": "MS"}, {"name": "Molly Smithson", "division": "MS"}, {"name": "Anthony Stewart", "division": "MS"}, {"name": "Landon Stula", "division": "MS"}, {"name": "Dante Yazzie", "division": "MS"}, {"name": "Daynell Yazzie", "division": "MS"}];
+let rosterMeta = {};
+
+async function loadRosterMeta(){
+  try{
+    const snap = await getDocs(collection(db, "sportsRoster"));
+    snap.forEach(d => {
+      const data = d.data();
+      if(data.name) rosterMeta[data.name] = data;
+    });
+  }catch(err){
+    console.warn("Roster metadata unavailable:", err);
+  }
+}
+
+function splitName(full){
+  const parts = String(full || "").trim().split(/\s+/);
+  return {
+    first: parts.shift() || "",
+    last: parts.join(" ")
+  };
+}
+
+function applyStudentProfile(){
+  const full = studentName.value;
+  const parts = splitName(full);
+  firstName.value = parts.first;
+  lastName.value = parts.last;
+
+  const meta = rosterMeta[full];
+  if(meta){
+    if(meta.grade) grade.value = String(meta.grade);
+    if(meta.gender) gender.value = meta.gender;
+  }
+
+  updateGradeSections();
+}
+
+studentName.addEventListener("change", applyStudentProfile);
+loadRosterMeta();
+
+function updateGradeSections(){
+  const g = Number(grade.value);
+  const selectedGender = gender.value.toLowerCase();
+
+  document.querySelectorAll(".sport").forEach(card => {
+    const minGrade = Number(card.dataset.minGrade || 4);
+    const maxGrade = Number(card.dataset.maxGrade || 8);
+    const allowedGender = card.dataset.gender || "coed";
+
+    const gradeMatch = !g || (g >= minGrade && g <= maxGrade);
+    const genderMatch =
+      !selectedGender ||
+      allowedGender === "coed" ||
+      allowedGender === selectedGender;
+
+    const visible = gradeMatch && genderMatch;
+    card.classList.toggle("hidden", !visible);
+
+    const cb = card.querySelector('input[name="sports"]');
+    if (cb && !visible) cb.checked = false;
+  });
+
+  updateFirstChoice();
+  updateSportLimit();
+}
+
+function updateFirstChoice(){
+  const selected = [...document.querySelectorAll('input[name="sports"]:checked')]
+    .map(x => x.value);
+
+  const old = firstChoice.value;
+  firstChoice.innerHTML = '<option value="">Choose your first-choice sport</option>';
+
+  selected.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = cleanSportName(s);
+    firstChoice.appendChild(opt);
+  });
+
+  if(selected.includes(old)) {
+    firstChoice.value = old;
+  } else if(selected.length === 1) {
+    firstChoice.value = selected[0];
+  }
+}
+
+function cleanSportName(s){
+  return String(s || "")
+    .replace("IYAC Coed Flag Football - Grades 5-8", "IYAC Coed Flag Football")
+    .replace("CAA Boys Volleyball", "CAA Boys Volleyball")
+    .replace("CAA Girls Flag Football - Grades 4-5", "CAA Girls Flag Football (Grades 4–5)")
+    .replace("Internal Esports Mario Kart - Grades 4-8", "Esports: Mario Kart")
+    .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.")
+    .replace("Internal Chess - Grades 4-8", "Chess");
+}
+
+function updateSportLimit(){
+  const checked = [...document.querySelectorAll('input[name="sports"]:checked')];
+  const visibleUnchecked = [...document.querySelectorAll('input[name="sports"]:not(:checked)')]
+    .filter(cb => !cb.closest(".sport").classList.contains("hidden"));
+
+  visibleUnchecked.forEach(cb => cb.disabled = checked.length >= 2);
+
+  const limitMessage = document.getElementById("sportLimitMessage");
+  if(checked.length >= 2){
+    limitMessage.textContent = "Maximum reached: you selected two sports. Choose which one is your FIRST choice below.";
+    limitMessage.style.display = "block";
+  } else {
+    limitMessage.style.display = "none";
+  }
+}
+
+grade.addEventListener("change", updateGradeSections);
+gender.addEventListener("change", updateGradeSections);
+
+document.querySelectorAll('input[name="sports"]').forEach(cb => {
+  cb.addEventListener("change", () => {
+    const selected = [...document.querySelectorAll('input[name="sports"]:checked')];
+    if(selected.length > 2){
+      cb.checked = false;
+      const limitMessage = document.getElementById("sportLimitMessage");
+      limitMessage.textContent = "You may choose a maximum of two sports.";
+      limitMessage.style.display = "block";
+    }
+    updateFirstChoice();
+    updateSportLimit();
+  });
+});
+
+form.addEventListener("reset", () => {
+  setTimeout(() => {
+    document.querySelectorAll(".sport").forEach(card => { card.classList.remove("hidden"); const cb=card.querySelector("input"); if(cb) cb.disabled=false; });
+    firstChoice.innerHTML = '<option value="">Select a sport first</option>';
+    message.className = "";
+    message.style.display = "none";
+  }, 0);
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const sports = [...document.querySelectorAll('input[name="sports"]:checked')]
+    .map(x => x.value);
+
+  if(!sports.length){
+    showMessage("Please select at least one sport.", "error");
+    return;
+  }
+
+  if(sports.length > 2){
+    showMessage("Please select no more than two sports.", "error");
+    return;
+  }
+
+  if(!firstChoice.value || !sports.includes(firstChoice.value)){
+    showMessage("Please choose your first-choice sport.", "error");
+    return;
+  }
+
+  if (!firebaseReady) {
+    showMessage(
+      "The form is still connecting to the response database. Please wait a moment and try again.",
+      "error"
+    );
+    return;
+  }
+
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const response = {
+    studentName: (data.studentName || "").trim(),
+    studentFirstName: (data.firstName || "").trim(),
+    studentLastName: (data.lastName || "").trim(),
+    grade: data.grade || "",
+    gender: data.gender || "",
+    teacher: (data.teacher || "").trim(),
+    sports,
+    firstChoice: data.firstChoice || "",
+    secondChoice: sports.find(s => s !== data.firstChoice) || "",
+    likelihood: data.likelihood || "",
+    experience: data.experience || "",
+    willingToTryNewSport: data.newSport || "",
+    comments: (data.comments || "").trim(),
+    submittedAt: serverTimestamp(),
+    source: "season2-sports-interest-2026"
+  };
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
+  try {
+    await addDoc(collection(db, "season2SportsInterest"), response);
+
+    showMessage(
+      "Your sports interest has been submitted successfully. Thank you!",
+      "success"
+    );
+
+    form.reset();
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+    console.error("Submission error:", error);
+
+    showMessage(
+      "Your response could not be saved. Please try again or tell your teacher.",
+      "error"
+    );
+
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Interest";
+  }
+});
+
+updateGradeSections();
+</script>
+</body>
+</html>

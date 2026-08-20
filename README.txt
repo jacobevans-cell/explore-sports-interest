@@ -1,78 +1,39 @@
-Explore Academy Season 2 Sports Interest — Corrected Offerings
-
-STUDENT FORM
-Students can choose a maximum of TWO sports.
-They must identify a FIRST choice.
-The second selection is treated as a backup choice.
-The form clearly explains that all teams depend on participation numbers.
-
-AVAILABLE PROGRAMS
-
-IYAC
-- Coed Flag Football — Grades 5–8
-- Boys and girls play together.
-
-CAA
-- Boys Volleyball — Grades 4–8 interest pool
-  - CAA has overlapping 4–6 and 6–8 divisions.
-  - 6th graders select Boys Volleyball only once.
-  - Final team/division placement is determined after participation numbers are reviewed.
-- Girls Flag Football — Grades 4–5
-
-INTERNAL
-- Esports: Mario Kart — Grades 4–8, coed
-- Esports: Smash Bros. — Grades 4–8, coed
-
-The form filters choices automatically by grade and gender.
+EXPLORE ACADEMY ATHLETICS PORTAL — FOUNDATION V1
 
 FILES
-- index.html — corrected student interest form
-- admin.html — results dashboard
-- firestore.rules — existing Firestore rules
+index.html                 Master Explore Athletics home
+interest.html              Firebase-backed sports interest/enrollment form
+admin.html                 Firebase-backed athletics interest/admin dashboard
+planner.html               IYAC/CAA budget and team-planning tool
+teams/jv-volleyball.html   Existing JV volleyball portal preserved intact
+firestore.rules            Current Firestore rules used by interest/admin system
 
-FIREBASE
-No database reset is required.
-New responses will use the corrected sport names and include firstChoice and secondChoice fields.
+CORE PROGRAM LOGIC
+- IYAC first for middle-school opportunities whenever the sport is offered.
+- CAA supplements elementary sports IYAC does not appropriately serve.
+- 4th grade defaults to CAA elementary.
+- 5th grade stays elementary whenever possible even when technically IYAC eligible.
+- 6th grade is the bridge grade and is manually placed based on enrollment, roster viability, safety, and competitive balance.
+- 7th–8th default to IYAC where available.
 
-GITHUB
-Replace index.html and admin.html in the repository root.
+CURRENT FOUR-SEASON MODEL
+Season 1 Fall: CAA 4–5 Girls Volleyball; IYAC MS Girls Volleyball; IYAC MS Coed Flag
+Season 2 Late Fall: CAA 4–6 Boys Volleyball; CAA 4–5 Girls Flag
+Season 3 Winter: IYAC MS Boys Basketball; IYAC MS Girls Basketball; CAA 4–5 Boys Flag
+Season 4 Spring: IYAC MS Coed Soccer; CAA 4–5 Boys Basketball; CAA 4–5 Coed Soccer if viable
 
+DATE CONFIDENCE
+- IYAC Season 1 Sept 21–Nov 19, 2026: confirmed from commissioner information supplied by user.
+- CAA sport windows are represented by their published seasonal ranges.
+- IYAC basketball/soccer dates are working reconstructed windows until commissioner dates are available.
 
-CLEAR ALL RESPONSES BUTTON
-- admin.html now includes a Clear All Responses button.
-- It requires typing: DELETE ALL RESPONSES
-- It then requires a second browser confirmation.
-- The included firestore.rules allows deletes from the season2SportsInterest collection.
-- IMPORTANT: Because the dashboard is not login-protected, delete access is also not identity-restricted. The typed confirmation prevents accidents but is not true access control.
-- Publish the updated firestore.rules before using the clear button.
+NEXT ARCHITECTURE PHASE
+1. Convert team definitions and league dates into Firestore collections.
+2. Create generic team-page template so every sport can have schedule/roster/results like the volleyball hub.
+3. Add master athlete records and conflict detection across teams.
+4. Add enrollment/consent/payment/status workflow.
+5. Add coach assignments, facilities/practice slots, game scheduling, transportation and calendar export.
+6. Add automatic viability and CAA cost warnings before team registration deadlines.
 
-
-ROSTER SETUP
-- The supplied Grades 4–5 and Middle School rosters are preloaded into index.html and admin.html.
-- Admin Dashboard > Roster Setup lets you multi-select students.
-- Choose a grade, gender, or both, then click Apply to Selected.
-- Use the roster-group filter and Select Visible for batch work.
-- Student form now uses a student-name dropdown.
-- If roster metadata has been saved, grade and gender auto-fill when a student chooses their name.
-- If metadata has not been saved yet, grade/gender remain manually selectable.
-- Roster metadata is stored in Firestore collection: sportsRoster.
-- Publish the included updated firestore.rules before using Roster Setup.
-
-
-V6 BULK RESPONSE ENTRY
-- Roster Setup now includes grade, gender, and name filters.
-- Example workflow:
-  1. Filter Grade 4.
-  2. Filter Girls.
-  3. Click Select Filtered.
-  4. Choose CAA Girls Flag Football.
-  5. Click Create Responses.
-- One Firestore response is created for every selected student.
-- Eligibility is checked before the records are created.
-- You can also assign one first choice plus one second choice to the whole selected batch.
-
-
-V8 VERIFIED BULK FIX
-- Rebuilt the entire roster save + bulk response section.
-- Verified JavaScript syntax with Node.
-- Create Responses now saves grade/gender and creates one Firestore document for every checked student.
+BRANDING
+The uploaded Sports Calendar project did not contain an official Explore Academy logo image file. The V1 master portal therefore preserves the existing navy/blue/red visual language and uses an eagle mark placeholder. Replace the mark with the official logo when the image asset is available.
