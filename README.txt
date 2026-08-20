@@ -13,8 +13,10 @@ IYAC
 - Boys and girls play together.
 
 CAA
-- Boys Volleyball — Grades 4–6
-- Boys Volleyball — Grades 6–8
+- Boys Volleyball — Grades 4–8 interest pool
+  - CAA has overlapping 4–6 and 6–8 divisions.
+  - 6th graders select Boys Volleyball only once.
+  - Final team/division placement is determined after participation numbers are reviewed.
 - Girls Flag Football — Grades 4–5
 
 INTERNAL

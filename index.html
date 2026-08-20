@@ -333,19 +333,11 @@ button.secondary{background:#ece9f0;color:#4b4056}
             </span>
           </label>
 
-          <label class="sport" data-min-grade="4" data-max-grade="6" data-gender="boy">
-            <input type="checkbox" name="sports" value="CAA Boys Volleyball - Grades 4-6">
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="boy">
+            <input type="checkbox" name="sports" value="CAA Boys Volleyball">
             <span>
               <strong>CAA Boys Volleyball</strong>
-              <small>Grades 4–6 • Boys</small>
-            </span>
-          </label>
-
-          <label class="sport" data-min-grade="6" data-max-grade="8" data-gender="boy">
-            <input type="checkbox" name="sports" value="CAA Boys Volleyball - Grades 6-8">
-            <span>
-              <strong>CAA Boys Volleyball</strong>
-              <small>Grades 6–8 • Boys</small>
+              <small>Grades 4–8 • Boys • 6th-grade team placement will be determined after interest numbers are reviewed</small>
             </span>
           </label>
 
@@ -564,8 +556,7 @@ function updateFirstChoice(){
 function cleanSportName(s){
   return String(s || "")
     .replace("IYAC Coed Flag Football - Grades 5-8", "IYAC Coed Flag Football")
-    .replace("CAA Boys Volleyball - Grades 4-6", "CAA Boys Volleyball (Grades 4–6)")
-    .replace("CAA Boys Volleyball - Grades 6-8", "CAA Boys Volleyball (Grades 6–8)")
+    .replace("CAA Boys Volleyball", "CAA Boys Volleyball")
     .replace("CAA Girls Flag Football - Grades 4-5", "CAA Girls Flag Football (Grades 4–5)")
     .replace("Internal Esports Mario Kart - Grades 4-8", "Esports: Mario Kart")
     .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.");
