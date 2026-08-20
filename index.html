@@ -365,6 +365,11 @@ button.secondary{background:#ece9f0;color:#4b4056}
             </span>
           </label>
 
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Chess - Grades 4-8">
+            <span><strong>Chess</strong><small>Grades 4–8 • Internal program • Coed</small></span>
+          </label>
+
         </div>
       </div>
 
@@ -559,7 +564,8 @@ function cleanSportName(s){
     .replace("CAA Boys Volleyball", "CAA Boys Volleyball")
     .replace("CAA Girls Flag Football - Grades 4-5", "CAA Girls Flag Football (Grades 4–5)")
     .replace("Internal Esports Mario Kart - Grades 4-8", "Esports: Mario Kart")
-    .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.");
+    .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.")
+    .replace("Internal Chess - Grades 4-8", "Chess");
 }
 
 function updateSportLimit(){
