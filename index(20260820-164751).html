@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Academy | Season 2 Sports Interest</title>
+<style>
+:root{
+  --purple:#5b2a86;
+  --purple-dark:#35164f;
+  --purple-light:#8b5bc2;
+  --gold:#f2c14e;
+  --bg:#f5f4f8;
+  --card:#ffffff;
+  --ink:#1f2430;
+  --muted:#687083;
+  --border:#ded9e8;
+  --green:#15845c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at top right,rgba(139,91,194,.18),transparent 28rem),
+    linear-gradient(180deg,#ede7f4 0,#f7f7fa 22rem);
+  color:var(--ink);
+}
+.page{
+  width:min(960px,calc(100% - 28px));
+  margin:28px auto 60px;
+}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  background:linear-gradient(135deg,var(--purple-dark),var(--purple) 55%,var(--purple-light));
+  color:#fff;
+  padding:32px 30px;
+  box-shadow:0 18px 48px rgba(52,26,78,.22);
+}
+.hero:before,.hero:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.hero:before{width:260px;height:260px;right:-90px;top:-120px}
+.hero:after{width:150px;height:150px;right:80px;bottom:-95px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.24);
+  background:rgba(255,255,255,.10);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.hero h1{
+  margin:12px 0 8px;
+  font-size:clamp(30px,6vw,50px);
+  line-height:1;
+}
+.hero p{
+  max-width:720px;
+  margin:0;
+  line-height:1.55;
+  color:#f3edf8;
+}
+.alert{
+  margin-top:16px;
+  border:1px solid #ead59c;
+  border-radius:15px;
+  background:#fff8df;
+  color:#624e10;
+  padding:13px 15px;
+  font-size:14px;
+  font-weight:700;
+}
+form{
+  display:grid;
+  gap:18px;
+  margin-top:18px;
+}
+.card{
+  padding:22px;
+  border-radius:20px;
+  background:var(--card);
+  border:1px solid var(--border);
+  box-shadow:0 8px 26px rgba(31,36,48,.055);
+}
+.card h2{
+  margin:0 0 5px;
+  font-size:20px;
+  color:var(--purple-dark);
+}
+.card .intro{
+  margin:0 0 18px;
+  color:var(--muted);
+  font-size:14px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.full{grid-column:1/-1}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  font-size:14px;
+  font-weight:800;
+}
+.field span.optional{
+  font-weight:500;
+  color:var(--muted);
+}
+input,select,textarea{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #cfc9d9;
+  border-radius:12px;
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
+  outline:none;
+  transition:.18s ease;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--purple-light);
+  box-shadow:0 0 0 4px rgba(91,42,134,.10);
+}
+textarea{min-height:90px;resize:vertical}
+.group-title{
+  margin:18px 0 9px;
+  font-size:14px;
+  font-weight:900;
+  color:#4b2b66;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.sports{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.sport{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 13px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#faf9fc;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.sport:hover{
+  border-color:#bca7d4;
+  background:#fcfaff;
+}
+.sport input{
+  width:18px;
+  height:18px;
+  margin-top:1px;
+  accent-color:var(--purple);
+  flex:0 0 auto;
+}
+.sport strong{display:block;font-size:14px}
+.sport small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.hidden{display:none!important}
+.choice-note{
+  margin:11px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.inline-options{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:9px 12px;
+  background:#fafafa;
+  font-size:13px;
+  font-weight:750;
+  cursor:pointer;
+}
+.pill input{
+  width:16px;height:16px;margin:0;accent-color:var(--purple)
+}
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+button{
+  appearance:none;
+  border:0;
+  border-radius:13px;
+  padding:13px 18px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+}
+button.primary{background:var(--purple);color:#fff}
+button.primary:hover{background:#48206c}
+button.secondary{background:#ece9f0;color:#4b4056}
+#message{
+  display:none;
+  margin-top:14px;
+  padding:14px 15px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:750;
+}
+#message.success{
+  display:block;
+  background:#eaf8f1;
+  border:1px solid #b9e5cf;
+  color:var(--green);
+}
+#message.error{
+  display:block;
+  background:#fff0f0;
+  border:1px solid #f0c5c5;
+  color:#9f2f2f;
+}
+.footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:18px;
+}
+@media(max-width:700px){
+  .page{width:min(100% - 18px,960px);margin-top:12px}
+  .hero{padding:25px 20px;border-radius:20px}
+  .card{padding:18px}
+  .grid,.sports{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="hero">
+    <div class="badge">Explore Academy Athletics</div>
+    <h1>Season 2 Sports Interest</h1>
+    <p>
+      Help us determine which Season 2 teams have enough student interest to move forward.
+      Students may select more than one sport they would seriously consider participating in.
+    </p>
+  </section>
+
+  <div class="alert">
+    Interest only: submitting this form does not guarantee that a team will be offered or that a student has a roster spot.
+  </div>
+
+  <form id="sportsForm">
+    <section class="card">
+      <h2>Student Information</h2>
+      <p class="intro">Please use the student's current grade for the 2026–27 school year.</p>
+      <div class="grid">
+        <label class="field">
+          First Name *
+          <input type="text" name="firstName" required autocomplete="given-name">
+        </label>
+
+        <label class="field">
+          Last Name *
+          <input type="text" name="lastName" required autocomplete="family-name">
+        </label>
+
+        <label class="field">
+          Grade *
+          <select name="grade" id="grade" required>
+            <option value="">Choose grade</option>
+            <option value="4">4th Grade</option>
+            <option value="5">5th Grade</option>
+            <option value="6">6th Grade</option>
+            <option value="7">7th Grade</option>
+            <option value="8">8th Grade</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Homeroom / Teacher <span class="optional">(optional)</span>
+          <input type="text" name="teacher">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sports Interest</h2>
+      <p class="intro">Select every sport you would genuinely consider playing.</p>
+
+      <div id="elementarySection">
+        <div class="group-title">Elementary Season 2</div>
+        <div class="sports">
+          <label class="sport">
+            <input type="checkbox" name="sports" value="Girls Flag Football - Elementary">
+            <span><strong>Girls Flag Football</strong><small>Elementary</small></span>
+          </label>
+          <label class="sport">
+            <input type="checkbox" name="sports" value="Boys Volleyball - Elementary">
+            <span><strong>Boys Volleyball</strong><small>Elementary</small></span>
+          </label>
+        </div>
+      </div>
+
+      <div id="jhSection">
+        <div class="group-title">Junior High Season 2</div>
+        <div class="sports">
+          <label class="sport"><input type="checkbox" name="sports" value="Boys Volleyball - JH"><span><strong>Boys Volleyball</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Girls Softball - JH"><span><strong>Girls Softball</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Girls Wrestling - JH"><span><strong>Girls Wrestling</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Boys Wrestling - JH"><span><strong>Boys Wrestling</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Girls Flag Football - JH"><span><strong>Girls Flag Football</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="7v7 Passing League - JH"><span><strong>7v7 Passing League</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Boys Tennis - JH"><span><strong>Boys Tennis</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Girls Tennis - JH"><span><strong>Girls Tennis</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Esports Mario Kart - JH"><span><strong>Esports: Mario Kart</strong><small>Junior High</small></span></label>
+          <label class="sport"><input type="checkbox" name="sports" value="Esports Smash Bros - JH"><span><strong>Esports: Smash Bros.</strong><small>Junior High</small></span></label>
+        </div>
+      </div>
+
+      <p class="choice-note" id="gradeHint">Choose a grade above and the form will emphasize the sports available for that age group.</p>
+    </section>
+
+    <section class="card">
+      <h2>Your Interest Level</h2>
+      <p class="intro">This helps separate “that sounds neat” from “I would actually show up to practice.” A surprisingly useful distinction.</p>
+
+      <div class="grid">
+        <label class="field full">
+          If you selected multiple sports, what is your FIRST choice?
+          <select name="firstChoice" id="firstChoice">
+            <option value="">Select a sport first</option>
+          </select>
+        </label>
+
+        <label class="field full">
+          How likely would you be to join if this sport is offered? *
+          <div class="inline-options">
+            <label class="pill"><input type="radio" name="likelihood" value="Definitely" required> Definitely</label>
+            <label class="pill"><input type="radio" name="likelihood" value="Probably"> Probably</label>
+            <label class="pill"><input type="radio" name="likelihood" value="Maybe"> Maybe</label>
+          </div>
+        </label>
+
+        <label class="field">
+          Sports Experience *
+          <select name="experience" required>
+            <option value="">Choose one</option>
+            <option>No experience</option>
+            <option>Some recreational experience</option>
+            <option>Played on a school or club team</option>
+            <option>Several seasons of competitive experience</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Would you be willing to try a new sport?
+          <select name="newSport">
+            <option value="">Choose one</option>
+            <option>Yes</option>
+            <option>Maybe</option>
+            <option>No</option>
+          </select>
+        </label>
+
+        <label class="field full">
+          Comments <span class="optional">(optional)</span>
+          <textarea name="comments" placeholder="Positions played, prior experience, questions, or anything else we should know."></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Submit Interest</h2>
+      <p class="intro">
+        Your response will be used only to estimate participation and plan possible Season 2 teams.
+      </p>
+
+      <label class="pill" style="border-radius:14px;align-items:flex-start">
+        <input type="checkbox" name="accurate" required>
+        <span>I understand this is an interest survey and not official team registration.</span>
+      </label>
+
+      <div class="actions" style="margin-top:18px">
+        <button type="reset" class="secondary">Clear Form</button>
+        <button type="submit" class="primary">Submit Interest</button>
+      </div>
+      <div id="message"></div>
+    </section>
+  </form>
+
+  <div class="footer">Explore Academy • 2026–27 Athletics Interest Survey</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+/*
+  STEP 1:
+  Replace the values below with your Firebase Web App configuration.
+
+  Firebase Console:
+  Project Settings > General > Your apps > Web app > SDK setup and configuration
+
+  The config is safe to place in browser code. Security comes from Firestore
+  Security Rules, not from hiding these values.
+*/
+const firebaseConfig = {
+  apiKey: "AIzaSyCkObP423XCbzHC-wkWqKlH9phDiZBz-BM",
+  authDomain: "explore-sports-interest.firebaseapp.com",
+  projectId: "explore-sports-interest",
+  storageBucket: "explore-sports-interest.firebasestorage.app",
+  messagingSenderId: "617847108980",
+  appId: "1:617847108980:web:4efd00431740d1e03f2821"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let firebaseReady = false;
+
+async function connectFirebase() {
+  try {
+    await signInAnonymously(auth);
+    firebaseReady = true;
+    console.log("Firebase connected.");
+  } catch (error) {
+    console.error("Firebase connection failed:", error);
+  }
+}
+
+connectFirebase();
+
+const form = document.getElementById("sportsForm");
+const grade = document.getElementById("grade");
+const elementarySection = document.getElementById("elementarySection");
+const jhSection = document.getElementById("jhSection");
+const firstChoice = document.getElementById("firstChoice");
+const message = document.getElementById("message");
+
+function showMessage(text, type) {
+  message.textContent = text;
+  message.className = type;
+}
+
+function updateGradeSections(){
+  const g = Number(grade.value);
+
+  // Elementary sports displayed for grades 4–6.
+  elementarySection.classList.toggle("hidden", g >= 7);
+
+  // Junior High sports displayed for grades 6–8.
+  // Grade 6 can therefore see both groups.
+  jhSection.classList.toggle("hidden", g > 0 && g <= 5);
+
+  document.querySelectorAll('input[name="sports"]').forEach(cb => {
+    if (cb.closest(".hidden")) cb.checked = false;
+  });
+
+  updateFirstChoice();
+}
+
+function updateFirstChoice(){
+  const selected = [...document.querySelectorAll('input[name="sports"]:checked')]
+    .map(x => x.value);
+
+  const old = firstChoice.value;
+  firstChoice.innerHTML = '<option value="">Choose first choice</option>';
+
+  selected.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s;
+    opt.textContent = s.replace(" - JH","").replace(" - Elementary","");
+    firstChoice.appendChild(opt);
+  });
+
+  if(selected.includes(old)) firstChoice.value = old;
+}
+
+grade.addEventListener("change", updateGradeSections);
+
+document.querySelectorAll('input[name="sports"]').forEach(cb => {
+  cb.addEventListener("change", updateFirstChoice);
+});
+
+form.addEventListener("reset", () => {
+  setTimeout(() => {
+    elementarySection.classList.remove("hidden");
+    jhSection.classList.remove("hidden");
+    firstChoice.innerHTML = '<option value="">Select a sport first</option>';
+    message.className = "";
+    message.style.display = "none";
+  }, 0);
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const sports = [...document.querySelectorAll('input[name="sports"]:checked')]
+    .map(x => x.value);
+
+  if(!sports.length){
+    showMessage("Please select at least one sport.", "error");
+    return;
+  }
+
+  if (!firebaseReady) {
+    showMessage(
+      "The form is still connecting to the response database. Please wait a moment and try again.",
+      "error"
+    );
+    return;
+  }
+
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const response = {
+    studentFirstName: (data.firstName || "").trim(),
+    studentLastName: (data.lastName || "").trim(),
+    grade: data.grade || "",
+    teacher: (data.teacher || "").trim(),
+    sports,
+    firstChoice: data.firstChoice || "",
+    likelihood: data.likelihood || "",
+    experience: data.experience || "",
+    willingToTryNewSport: data.newSport || "",
+    comments: (data.comments || "").trim(),
+    submittedAt: serverTimestamp(),
+    source: "season2-sports-interest-2026"
+  };
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
+  try {
+    await addDoc(collection(db, "season2SportsInterest"), response);
+
+    showMessage(
+      "Your sports interest has been submitted successfully. Thank you!",
+      "success"
+    );
+
+    form.reset();
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+    console.error("Submission error:", error);
+
+    showMessage(
+      "Your response could not be saved. Please try again or tell your teacher.",
+      "error"
+    );
+
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Interest";
+  }
+});
+
+updateGradeSections();
+</script>
+</body>
+</html>
