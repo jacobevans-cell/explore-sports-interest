@@ -290,7 +290,8 @@ tr:last-child td{border-bottom:0}
     <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
       <h2 style="font-size:17px;margin-bottom:8px">Bulk Add Interest Responses</h2>
       <p class="intro">
-        Select students above, then create the same sports-interest record for the entire selected group.
+        Select as many students as you want. Choose <strong>Assign grade</strong> and <strong>Boy/Girl</strong> above,
+        choose their sport below, then click <strong>Create Responses</strong>. You do NOT have to click Apply to Selected first.
       </p>
 
       <div class="controls" style="grid-template-columns:1.4fr 1.4fr 1fr auto">
@@ -562,64 +563,107 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
   const firstSport = document.getElementById("bulkFirstSport").value;
   const secondSport = document.getElementById("bulkSecondSport").value;
   const likelihood = document.getElementById("bulkLikelihood").value;
+
+  // These top controls can now be used as part of the same one-click bulk workflow.
+  const assignmentGrade = document.getElementById("bulkGrade").value;
+  const assignmentGender = document.getElementById("bulkGender").value;
+
   const bs = document.getElementById("bulkResponseStatus");
+  const button = document.getElementById("createBulkResponses");
+
+  function fail(msg){
+    bs.textContent = msg;
+    bs.className = "status error";
+    bs.style.display = "block";
+    window.alert(msg);
+  }
 
   if(!selected.length){
-    bs.textContent = "Select at least one student above.";
-    bs.className = "status error";
+    fail("Select at least one student first.");
     return;
   }
 
   if(!firstSport){
-    bs.textContent = "Choose a first-choice sport.";
-    bs.className = "status error";
+    fail("Choose a first-choice sport.");
     return;
   }
 
   if(secondSport && secondSport === firstSport){
-    bs.textContent = "First and second choice cannot be the same sport.";
-    bs.className = "status error";
+    fail("First and second choice cannot be the same sport.");
     return;
   }
 
-  const missingMeta = selected.filter(name => {
-    const meta = rosterMeta[name] || {};
-    return !meta.grade || !meta.gender;
+  // Build the final metadata for each selected student.
+  // A grade/gender chosen in the bulk assignment controls overrides or fills
+  // any missing value, so Apply to Selected is no longer required first.
+  const finalMeta = {};
+  const stillMissing = [];
+
+  selected.forEach(name => {
+    const existing = rosterMeta[name] || {};
+    const merged = {
+      grade: assignmentGrade || existing.grade || "",
+      gender: assignmentGender || existing.gender || ""
+    };
+    finalMeta[name] = merged;
+    if(!merged.grade || !merged.gender) stillMissing.push(name);
   });
 
-  if(missingMeta.length){
-    bs.textContent = `Set grade and gender first for: ${missingMeta.join(", ")}`;
-    bs.className = "status error";
+  if(stillMissing.length){
+    fail(
+      "Grade and gender are required before creating records. " +
+      "Choose Assign grade and Boy/Girl at the top, then click Create Responses again."
+    );
     return;
   }
 
   const ineligible = selected.filter(name => {
-    const meta = rosterMeta[name];
+    const meta = finalMeta[name];
     if(!sportEligible(meta, firstSport)) return true;
     if(secondSport && !sportEligible(meta, secondSport)) return true;
     return false;
   });
 
   if(ineligible.length){
-    bs.textContent = `These students are not eligible for the selected sport combination: ${ineligible.join(", ")}`;
-    bs.className = "status error";
+    fail(
+      "These selected students are not eligible for the sport choice: " +
+      ineligible.join(", ")
+    );
     return;
   }
 
   const confirmed = window.confirm(
-    `Create ${selected.length} sports-interest response${selected.length===1?"":"s"} with the selected choices?`
+    `Create ${selected.length} response${selected.length===1?"":"s"}?\n\n` +
+    `Grade: ${assignmentGrade || "saved grade"}\n` +
+    `Gender: ${assignmentGender || "saved gender"}\n` +
+    `First choice: ${cleanSport(firstSport)}` +
+    (secondSport ? `\nSecond choice: ${cleanSport(secondSport)}` : "")
   );
   if(!confirmed) return;
 
-  const button = document.getElementById("createBulkResponses");
   button.disabled = true;
   button.textContent = "Creating...";
-  bs.textContent = `Creating ${selected.length} response${selected.length===1?"":"s"}...`;
+  bs.textContent = `Saving roster info and creating ${selected.length} response${selected.length===1?"":"s"}...`;
   bs.className = "status ok";
+  bs.style.display = "block";
 
   try{
     for(const name of selected){
-      const meta = rosterMeta[name];
+      const source = STATIC_ROSTER.find(s => s.name === name) || {};
+      const meta = finalMeta[name];
+
+      // Save/refresh roster metadata automatically.
+      await setDoc(
+        doc(db, "sportsRoster", rosterId(name)),
+        {
+          name,
+          division: source.division || "",
+          grade: String(meta.grade),
+          gender: meta.gender
+        },
+        { merge: true }
+      );
+
       const parts = splitRosterName(name);
       const sports = secondSport ? [firstSport, secondSport] : [firstSport];
 
@@ -642,14 +686,18 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
       });
     }
 
-    bs.textContent = `Created ${selected.length} response${selected.length===1?"":"s"} successfully.`;
+    bs.textContent = `Success: created ${selected.length} response${selected.length===1?"":"s"}.`;
     bs.className = "status ok";
+    bs.style.display = "block";
+
+    await loadRosterSetup();
     await loadResponses();
 
   }catch(err){
     console.error(err);
-    bs.textContent = "Could not create the responses. Check Firestore permissions.";
-    bs.className = "status error";
+    fail(
+      "Could not create the records. Make sure the updated firestore.rules file from this ZIP is published."
+    );
   }finally{
     button.disabled = false;
     button.textContent = "Create Responses";
