@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Academy | Sports Interest Dashboard</title>
+<style>
+:root{
+  --purple:#5b2a86;
+  --purple-dark:#35164f;
+  --purple-light:#8b5bc2;
+  --gold:#f2c14e;
+  --bg:#f5f4f8;
+  --card:#fff;
+  --ink:#1f2430;
+  --muted:#6c7280;
+  --border:#ded9e8;
+  --green:#17795a;
+  --red:#9b3030;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top right,rgba(139,91,194,.16),transparent 30rem),
+    linear-gradient(180deg,#eee8f5 0,#f7f7fa 28rem);
+}
+.shell{
+  width:min(1280px,calc(100% - 28px));
+  margin:24px auto 60px;
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:center;
+  padding:24px 26px;
+  border-radius:22px;
+  color:white;
+  background:linear-gradient(135deg,var(--purple-dark),var(--purple) 60%,var(--purple-light));
+  box-shadow:0 16px 40px rgba(53,22,79,.18);
+}
+header h1{margin:0 0 4px;font-size:clamp(25px,4vw,38px)}
+header p{margin:0;color:#eee7f4}
+.header-actions{display:flex;gap:10px;flex-wrap:wrap}
+button{
+  border:0;border-radius:12px;padding:11px 14px;font:inherit;font-weight:800;cursor:pointer
+}
+.btn-light{background:white;color:var(--purple-dark)}
+.btn-ghost{background:rgba(255,255,255,.13);color:white;border:1px solid rgba(255,255,255,.22)}
+.btn-primary{background:var(--purple);color:white}
+.btn-muted{background:#ece9f0;color:#4c4354}
+#loginCard{
+  max-width:560px;
+  margin:60px auto;
+  text-align:center;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:34px;
+  box-shadow:0 12px 32px rgba(30,24,40,.07);
+}
+#loginCard h2{margin:0 0 8px;color:var(--purple-dark)}
+#loginCard p{color:var(--muted);line-height:1.5}
+.notice{
+  margin:16px 0 0;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fff7dd;
+  border:1px solid #ead59b;
+  color:#655010;
+  font-size:13px;
+}
+.dashboard{display:none}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 7px 22px rgba(31,36,48,.05);
+}
+.stat .label{color:var(--muted);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.stat .value{font-size:34px;font-weight:900;color:var(--purple-dark);margin-top:5px}
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+.card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 7px 22px rgba(31,36,48,.045);
+}
+.card h2{margin:0 0 14px;font-size:19px;color:var(--purple-dark)}
+.bar-row{
+  display:grid;
+  grid-template-columns:minmax(150px,1.8fr) minmax(120px,3fr) 48px;
+  gap:10px;
+  align-items:center;
+  margin:9px 0;
+  font-size:13px;
+}
+.bar-label{font-weight:750}
+.bar-track{height:11px;background:#eeeaf2;border-radius:999px;overflow:hidden}
+.bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--purple-light));border-radius:999px}
+.bar-num{text-align:right;font-weight:900}
+.controls{
+  display:grid;
+  grid-template-columns:2fr repeat(3,1fr) auto;
+  gap:10px;
+  margin-bottom:14px;
+}
+input,select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #cec8d8;
+  border-radius:11px;
+  background:white;
+  font:inherit;
+}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:1050px;background:white}
+th,td{padding:11px 12px;border-bottom:1px solid #ece8f0;text-align:left;vertical-align:top;font-size:13px}
+th{
+  position:sticky;
+  top:0;
+  background:#f5f1f8;
+  color:#4a2d5e;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.035em;
+}
+tr:last-child td{border-bottom:0}
+.tag{
+  display:inline-block;
+  margin:2px 3px 2px 0;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#f0e8f7;
+  color:#512973;
+  font-size:11px;
+  font-weight:750;
+}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.status{
+  margin:14px 0;
+  padding:11px 13px;
+  border-radius:12px;
+  display:none;
+}
+.status.error{display:block;background:#fff0f0;color:var(--red);border:1px solid #efc6c6}
+.status.ok{display:block;background:#eaf8f2;color:var(--green);border:1px solid #b9e1cf}
+.userline{font-size:12px;margin-top:5px;color:#eee7f4;text-align:right}
+@media(max-width:900px){
+  header{align-items:flex-start;flex-direction:column}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .shell{width:min(100% - 14px,1280px);margin-top:8px}
+  header{border-radius:17px;padding:20px}
+  .stats{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:14px}
+  .stat .value{font-size:27px}
+  .controls{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div>
+    <h1>Season 2 Sports Dashboard</h1>
+    <p>Explore Academy Athletics • 2026–27 • Live Firestore Data</p>
+  </div>
+  <div>
+    <div class="header-actions">
+      <button id="refreshBtn" class="btn-ghost">Refresh</button>
+      <button id="exportBtn" class="btn-light">Export CSV</button>
+      
+    </div>
+    <div id="userLine" class="userline"></div>
+  </div>
+</header>
+
+<section id="loginCard" style="display:none">
+  <h2>Administrator Sign In</h2>
+  <p>Sign in with the Google account authorized to view student sports-interest responses.</p>
+  <button id="googleSignIn" class="btn-primary">Sign in with Google</button>
+  <div class="notice">
+    This page is designed to work with a Firestore rule that limits reads to an approved administrator email.
+  </div>
+  <div id="loginStatus" class="status"></div>
+</section>
+
+<main id="dashboard" class="dashboard">
+  <div id="status" class="status"></div>
+
+  <section class="stats">
+    <div class="stat"><div class="label">Responses</div><div id="totalResponses" class="value">0</div></div>
+    <div class="stat"><div class="label">Definitely Join</div><div id="definitelyCount" class="value">0</div></div>
+    <div class="stat"><div class="label">Unique Students</div><div id="uniqueStudents" class="value">0</div></div>
+    <div class="stat"><div class="label">Sports With Interest</div><div id="sportsCount" class="value">0</div></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Interest by Sport</h2>
+      <div id="sportBars"></div>
+    </div>
+    <div class="card">
+      <h2>First Choice by Sport</h2>
+      <div id="choiceBars"></div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Responses by Grade</h2>
+      <div id="gradeBars"></div>
+    </div>
+    <div class="card">
+      <h2>Likelihood to Join</h2>
+      <div id="likelihoodBars"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Student Responses</h2>
+    <div class="controls">
+      <input id="searchBox" type="search" placeholder="Search student, teacher, sport...">
+      <select id="gradeFilter">
+        <option value="">All grades</option>
+        <option value="4">4th</option>
+        <option value="5">5th</option>
+        <option value="6">6th</option>
+        <option value="7">7th</option>
+        <option value="8">8th</option>
+      </select>
+      <select id="likelihoodFilter">
+        <option value="">All likelihoods</option>
+        <option value="Definitely">Definitely</option>
+        <option value="Probably">Probably</option>
+        <option value="Maybe">Maybe</option>
+      </select>
+      <select id="sportFilter"><option value="">All sports</option></select>
+      <button id="clearFilters" class="btn-muted">Clear</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Grade</th>
+            <th>Teacher</th>
+            <th>Sports Selected</th>
+            <th>First Choice</th>
+            <th>Likelihood</th>
+            <th>Experience</th>
+            <th>Try New Sport</th>
+            <th>Comments</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="responseRows"></tbody>
+      </table>
+    </div>
+    <div id="emptyState" class="empty" style="display:none">No responses match these filters.</div>
+  </section>
+</main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, query, orderBy
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCkObP423XCbzHC-wkWqKlH9phDiZBz-BM",
+  authDomain: "explore-sports-interest.firebaseapp.com",
+  projectId: "explore-sports-interest",
+  storageBucket: "explore-sports-interest.firebasestorage.app",
+  messagingSenderId: "617847108980",
+  appId: "1:617847108980:web:4efd00431740d1e03f2821",
+  measurementId: "G-2HBGS7K1MC"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let allResponses = [];
+
+const dashboard = document.getElementById("dashboard");
+const status = document.getElementById("status");
+const refreshBtn = document.getElementById("refreshBtn");
+const exportBtn = document.getElementById("exportBtn");
+
+
+document.getElementById("loginCard").style.display = "none";
+document.getElementById("dashboard").style.display = "block";
+refreshBtn.style.display = "";
+exportBtn.style.display = "";
+loadResponses();
+
+async function loadResponses(){
+  status.textContent = "Loading responses...";
+  status.className = "status ok";
+  try{
+    const q = query(collection(db,"season2SportsInterest"), orderBy("submittedAt","desc"));
+    const snap = await getDocs(q);
+    allResponses = snap.docs.map(d => ({id:d.id,...d.data()}));
+    status.className = "status";
+    renderAll();
+  }catch(err){
+    console.error(err);
+    status.textContent = "Could not read Firestore. Most likely the administrator-read rule or Google sign-in provider still needs to be enabled.";
+    status.className = "status error";
+  }
+}
+
+function countBy(items, valueFn){
+  const out = {};
+  items.forEach(item => {
+    const v = valueFn(item);
+    if(Array.isArray(v)){
+      v.forEach(x => { if(x) out[x]=(out[x]||0)+1; });
+    }else if(v){
+      out[v]=(out[v]||0)+1;
+    }
+  });
+  return out;
+}
+
+function renderBars(targetId, counts){
+  const target = document.getElementById(targetId);
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){
+    target.innerHTML = '<div class="empty">No data yet.</div>';
+    return;
+  }
+  const max = Math.max(...entries.map(x=>x[1]),1);
+  target.innerHTML = entries.map(([label,n]) => `
+    <div class="bar-row">
+      <div class="bar-label">${escapeHtml(cleanSport(label))}</div>
+      <div class="bar-track"><div class="bar" style="width:${Math.max(3,n/max*100)}%"></div></div>
+      <div class="bar-num">${n}</div>
+    </div>
+  `).join("");
+}
+
+function renderAll(){
+  document.getElementById("totalResponses").textContent = allResponses.length;
+  document.getElementById("definitelyCount").textContent =
+    allResponses.filter(r=>r.likelihood==="Definitely").length;
+
+  const unique = new Set(allResponses.map(r =>
+    `${(r.studentFirstName||"").trim().toLowerCase()}|${(r.studentLastName||"").trim().toLowerCase()}|${r.grade||""}`
+  ));
+  document.getElementById("uniqueStudents").textContent = unique.size;
+
+  const sportCounts = countBy(allResponses,r=>r.sports||[]);
+  document.getElementById("sportsCount").textContent = Object.keys(sportCounts).length;
+
+  renderBars("sportBars", sportCounts);
+  renderBars("choiceBars", countBy(allResponses,r=>r.firstChoice));
+  renderBars("gradeBars", countBy(allResponses,r=>r.grade ? `Grade ${r.grade}` : "Unknown"));
+  renderBars("likelihoodBars", countBy(allResponses,r=>r.likelihood));
+
+  const sportFilter = document.getElementById("sportFilter");
+  const current = sportFilter.value;
+  sportFilter.innerHTML = '<option value="">All sports</option>' +
+    Object.keys(sportCounts).sort().map(s=>`<option value="${escapeAttr(s)}">${escapeHtml(cleanSport(s))}</option>`).join("");
+  if([...sportFilter.options].some(o=>o.value===current)) sportFilter.value=current;
+
+  renderTable();
+}
+
+function getFiltered(){
+  const q = document.getElementById("searchBox").value.trim().toLowerCase();
+  const grade = document.getElementById("gradeFilter").value;
+  const likelihood = document.getElementById("likelihoodFilter").value;
+  const sport = document.getElementById("sportFilter").value;
+
+  return allResponses.filter(r => {
+    if(grade && String(r.grade)!==grade) return false;
+    if(likelihood && r.likelihood!==likelihood) return false;
+    if(sport && !(r.sports||[]).includes(sport)) return false;
+
+    if(q){
+      const hay = [
+        r.studentFirstName,r.studentLastName,r.teacher,r.firstChoice,r.likelihood,
+        r.experience,r.willingToTryNewSport,r.comments,...(r.sports||[])
+      ].join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderTable(){
+  const rows = getFiltered();
+  const tbody = document.getElementById("responseRows");
+  const empty = document.getElementById("emptyState");
+
+  empty.style.display = rows.length ? "none" : "block";
+
+  tbody.innerHTML = rows.map(r => {
+    const submitted = r.submittedAt?.toDate ? r.submittedAt.toDate().toLocaleString() : "";
+    return `<tr>
+      <td><strong>${escapeHtml(`${r.studentFirstName||""} ${r.studentLastName||""}`.trim())}</strong></td>
+      <td>${escapeHtml(r.grade||"")}</td>
+      <td>${escapeHtml(r.teacher||"")}</td>
+      <td>${(r.sports||[]).map(s=>`<span class="tag">${escapeHtml(cleanSport(s))}</span>`).join("")}</td>
+      <td>${escapeHtml(cleanSport(r.firstChoice||""))}</td>
+      <td>${escapeHtml(r.likelihood||"")}</td>
+      <td>${escapeHtml(r.experience||"")}</td>
+      <td>${escapeHtml(r.willingToTryNewSport||"")}</td>
+      <td>${escapeHtml(r.comments||"")}</td>
+      <td>${escapeHtml(submitted)}</td>
+    </tr>`;
+  }).join("");
+}
+
+["searchBox","gradeFilter","likelihoodFilter","sportFilter"].forEach(id=>{
+  document.getElementById(id).addEventListener(id==="searchBox" ? "input" : "change", renderTable);
+});
+
+document.getElementById("clearFilters").addEventListener("click",()=>{
+  document.getElementById("searchBox").value="";
+  document.getElementById("gradeFilter").value="";
+  document.getElementById("likelihoodFilter").value="";
+  document.getElementById("sportFilter").value="";
+  renderTable();
+});
+
+function exportCSV(){
+  const rows = getFiltered();
+  const headers = [
+    "First Name","Last Name","Grade","Teacher","Sports","First Choice","Likelihood",
+    "Experience","Willing To Try New Sport","Comments","Submitted"
+  ];
+  const data = rows.map(r => [
+    r.studentFirstName||"", r.studentLastName||"", r.grade||"", r.teacher||"",
+    (r.sports||[]).map(cleanSport).join("; "), cleanSport(r.firstChoice||""), r.likelihood||"",
+    r.experience||"", r.willingToTryNewSport||"", r.comments||"",
+    r.submittedAt?.toDate ? r.submittedAt.toDate().toLocaleString() : ""
+  ]);
+  const csv = [headers,...data].map(row=>row.map(csvCell).join(",")).join("\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url;
+  a.download=`season-2-sports-interest-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function cleanSport(s){
+  return String(s||"").replace(" - JH","").replace(" - Elementary","");
+}
+function escapeHtml(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function escapeAttr(v){ return escapeHtml(v); }
+function csvCell(v){
+  const s=String(v??"");
+  return `"${s.replace(/"/g,'""')}"`;
+}
+</script>
+</body>
+</html>
