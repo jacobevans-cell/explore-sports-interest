@@ -1,48 +1,36 @@
-# Explore Academy Season 2 Sports Interest
+Explore Academy Season 2 Sports Interest — Corrected Offerings
 
-Files
-- index.html — student sports-interest form
-- admin.html — live dashboard for viewing responses
-- firestore.rules — Firestore rules to paste into Firebase
+STUDENT FORM
+Students can choose a maximum of TWO sports.
+They must identify a FIRST choice.
+The second selection is treated as a backup choice.
+The form clearly explains that all teams depend on participation numbers.
 
-Firebase setup
-1. Firestore Database must be enabled.
-2. Authentication > Sign-in method > Anonymous must be enabled.
-3. In Firestore > Rules, replace the rules with the contents of firestore.rules and Publish.
+AVAILABLE PROGRAMS
 
-GitHub setup
-1. Upload index.html and admin.html to the root of:
-   jacobevans-cell/explore-sports-interest
-2. Go to GitHub repository Settings > Pages.
-3. Under Build and deployment, choose:
-   Source: Deploy from a branch
-   Branch: main
-   Folder: / (root)
-4. Save.
+IYAC
+- Coed Flag Football — Grades 5–8
+- Boys and girls play together.
 
-Pages
-Student form:
-https://jacobevans-cell.github.io/explore-sports-interest/
+CAA
+- Boys Volleyball — Grades 4–6
+- Boys Volleyball — Grades 6–8
+- Girls Flag Football — Grades 4–5
 
-Dashboard:
-https://jacobevans-cell.github.io/explore-sports-interest/admin.html
+INTERNAL
+- Esports: Mario Kart — Grades 4–8, coed
+- Esports: Smash Bros. — Grades 4–8, coed
 
-Firestore collection
-Responses are stored in:
-season2SportsInterest
+The form filters choices automatically by grade and gender.
 
-Important
-The included Firestore rules allow public read access to this one collection because that is the access model requested for this project. Anyone capable of querying the Firebase project can technically read the collection. Update the rules later if you decide to restrict dashboard access.
+FILES
+- index.html — corrected student interest form
+- admin.html — results dashboard
+- firestore.rules — existing Firestore rules
 
+FIREBASE
+No database reset is required.
+New responses will use the corrected sport names and include firstChoice and secondChoice fields.
 
-Gender eligibility
-- Boys only see boys-designated and coed sports.
-- Girls only see girls-designated and coed sports.
-- 7v7 Passing League is currently configured as coed.
-- Esports Mario Kart and Smash Bros are configured as coed.
-- Grade 6 can see both Elementary and Junior High categories when applicable.
-
-All-grade activities
-- Esports: Mario Kart is available to grades 4–8 and is coed.
-- Esports: Smash Bros. is available to grades 4–8 and is coed.
-- Chess is available to grades 4–8 and is coed.
+GITHUB
+Replace index.html and admin.html in the repository root.

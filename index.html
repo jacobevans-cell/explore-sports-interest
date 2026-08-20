@@ -311,55 +311,75 @@ button.secondary{background:#ece9f0;color:#4b4056}
 
     <section class="card">
       <h2>Sports Interest</h2>
-      <p class="intro">Select every sport you would genuinely consider playing.</p>
+      <p class="intro">
+        Choose your <strong>first-choice sport</strong> and, if you want, <strong>one backup choice</strong>.
+        You may select a maximum of two sports.
+      </p>
 
-      <div id="allGradesSection">
-        <div class="group-title">All Grades • Coed</div>
+      <div class="alert" style="margin:0 0 18px">
+        <strong>Important:</strong> Teams depend on student interest and roster numbers. Your first choice is the sport you most want to play.
+        A second choice is only a backup and does not guarantee placement. Selecting more sports does not increase your chance of getting your preferred team.
+      </div>
+
+      <div id="availableSports">
+        <div class="group-title">Available for Your Grade</div>
         <div class="sports">
-          <label class="sport" data-gender="coed">
-            <input type="checkbox" name="sports" value="Esports Mario Kart - All Grades">
-            <span><strong>Esports: Mario Kart</strong><small>Grades 4–8 • Coed</small></span>
+
+          <label class="sport" data-min-grade="5" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="IYAC Coed Flag Football - Grades 5-8">
+            <span>
+              <strong>IYAC Coed Flag Football</strong>
+              <small>Grades 5–8 • Boys & Girls play together</small>
+            </span>
           </label>
-          <label class="sport" data-gender="coed">
-            <input type="checkbox" name="sports" value="Esports Smash Bros - All Grades">
-            <span><strong>Esports: Smash Bros.</strong><small>Grades 4–8 • Coed</small></span>
+
+          <label class="sport" data-min-grade="4" data-max-grade="6" data-gender="boy">
+            <input type="checkbox" name="sports" value="CAA Boys Volleyball - Grades 4-6">
+            <span>
+              <strong>CAA Boys Volleyball</strong>
+              <small>Grades 4–6 • Boys</small>
+            </span>
           </label>
-          <label class="sport" data-gender="coed">
-            <input type="checkbox" name="sports" value="Chess - All Grades">
-            <span><strong>Chess</strong><small>Grades 4–8 • Coed</small></span>
+
+          <label class="sport" data-min-grade="6" data-max-grade="8" data-gender="boy">
+            <input type="checkbox" name="sports" value="CAA Boys Volleyball - Grades 6-8">
+            <span>
+              <strong>CAA Boys Volleyball</strong>
+              <small>Grades 6–8 • Boys</small>
+            </span>
           </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="5" data-gender="girl">
+            <input type="checkbox" name="sports" value="CAA Girls Flag Football - Grades 4-5">
+            <span>
+              <strong>CAA Girls Flag Football</strong>
+              <small>Grades 4–5 • Girls</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Esports Mario Kart - Grades 4-8">
+            <span>
+              <strong>Esports: Mario Kart</strong>
+              <small>Grades 4–8 • Internal program • Coed</small>
+            </span>
+          </label>
+
+          <label class="sport" data-min-grade="4" data-max-grade="8" data-gender="coed">
+            <input type="checkbox" name="sports" value="Internal Esports Smash Bros - Grades 4-8">
+            <span>
+              <strong>Esports: Smash Bros.</strong>
+              <small>Grades 4–8 • Internal program • Coed</small>
+            </span>
+          </label>
+
         </div>
       </div>
 
-      <div id="elementarySection">
-        <div class="group-title">Elementary Season 2</div>
-        <div class="sports">
-          <label class="sport" data-gender="girl">
-            <input type="checkbox" name="sports" value="Girls Flag Football - Elementary">
-            <span><strong>Girls Flag Football</strong><small>Elementary</small></span>
-          </label>
-          <label class="sport" data-gender="boy">
-            <input type="checkbox" name="sports" value="Boys Volleyball - Elementary">
-            <span><strong>Boys Volleyball</strong><small>Elementary</small></span>
-          </label>
-        </div>
-      </div>
-
-      <div id="jhSection">
-        <div class="group-title">Junior High Season 2</div>
-        <div class="sports">
-          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Volleyball - JH"><span><strong>Boys Volleyball</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Softball - JH"><span><strong>Girls Softball</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Wrestling - JH"><span><strong>Girls Wrestling</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Wrestling - JH"><span><strong>Boys Wrestling</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Flag Football - JH"><span><strong>Girls Flag Football</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="7v7 Passing League - JH"><span><strong>7v7 Passing League</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Tennis - JH"><span><strong>Boys Tennis</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Tennis - JH"><span><strong>Girls Tennis</strong><small>Junior High</small></span></label>
-        </div>
-      </div>
-
-      <p class="choice-note" id="gradeHint">Choose a grade above and the form will emphasize the sports available for that age group.</p>
+      <p class="choice-note" id="gradeHint">
+        Your choices update automatically based on grade and gender.
+      </p>
+      <div id="sportLimitMessage" class="status error" style="display:none"></div>
     </section>
 
     <section class="card">
@@ -368,8 +388,8 @@ button.secondary{background:#ece9f0;color:#4b4056}
 
       <div class="grid">
         <label class="field full">
-          If you selected multiple sports, what is your FIRST choice?
-          <select name="firstChoice" id="firstChoice">
+          What is your FIRST choice? *
+          <select name="firstChoice" id="firstChoice" required>
             <option value="">Select a sport first</option>
           </select>
         </label>
@@ -486,8 +506,6 @@ connectFirebase();
 const form = document.getElementById("sportsForm");
 const grade = document.getElementById("grade");
 const gender = document.getElementById("gender");
-const elementarySection = document.getElementById("elementarySection");
-const jhSection = document.getElementById("jhSection");
 const firstChoice = document.getElementById("firstChoice");
 const message = document.getElementById("message");
 
@@ -500,29 +518,26 @@ function updateGradeSections(){
   const g = Number(grade.value);
   const selectedGender = gender.value.toLowerCase();
 
-  // Elementary sports displayed for grades 4–6.
-  elementarySection.classList.toggle("hidden", g >= 7);
-
-  // Junior High sports displayed for grades 6–8.
-  // Grade 6 can therefore see both groups.
-  jhSection.classList.toggle("hidden", g > 0 && g <= 5);
-
   document.querySelectorAll(".sport").forEach(card => {
-    const allowed = card.dataset.gender || "coed";
+    const minGrade = Number(card.dataset.minGrade || 4);
+    const maxGrade = Number(card.dataset.maxGrade || 8);
+    const allowedGender = card.dataset.gender || "coed";
+
+    const gradeMatch = !g || (g >= minGrade && g <= maxGrade);
     const genderMatch =
       !selectedGender ||
-      allowed === "coed" ||
-      allowed === selectedGender;
+      allowedGender === "coed" ||
+      allowedGender === selectedGender;
 
-    const gradeSection = card.closest("#elementarySection, #jhSection");
-    const sectionHidden = gradeSection ? gradeSection.classList.contains("hidden") : false;
-    card.classList.toggle("hidden", !genderMatch);
+    const visible = gradeMatch && genderMatch;
+    card.classList.toggle("hidden", !visible);
 
     const cb = card.querySelector('input[name="sports"]');
-    if (cb && (!genderMatch || sectionHidden)) cb.checked = false;
+    if (cb && !visible) cb.checked = false;
   });
 
   updateFirstChoice();
+  updateSportLimit();
 }
 
 function updateFirstChoice(){
@@ -530,30 +545,68 @@ function updateFirstChoice(){
     .map(x => x.value);
 
   const old = firstChoice.value;
-  firstChoice.innerHTML = '<option value="">Choose first choice</option>';
+  firstChoice.innerHTML = '<option value="">Choose your first-choice sport</option>';
 
   selected.forEach(s => {
     const opt = document.createElement("option");
     opt.value = s;
-    opt.textContent = s.replace(" - JH","").replace(" - Elementary","");
+    opt.textContent = cleanSportName(s);
     firstChoice.appendChild(opt);
   });
 
-  if(selected.includes(old)) firstChoice.value = old;
+  if(selected.includes(old)) {
+    firstChoice.value = old;
+  } else if(selected.length === 1) {
+    firstChoice.value = selected[0];
+  }
+}
+
+function cleanSportName(s){
+  return String(s || "")
+    .replace("IYAC Coed Flag Football - Grades 5-8", "IYAC Coed Flag Football")
+    .replace("CAA Boys Volleyball - Grades 4-6", "CAA Boys Volleyball (Grades 4–6)")
+    .replace("CAA Boys Volleyball - Grades 6-8", "CAA Boys Volleyball (Grades 6–8)")
+    .replace("CAA Girls Flag Football - Grades 4-5", "CAA Girls Flag Football (Grades 4–5)")
+    .replace("Internal Esports Mario Kart - Grades 4-8", "Esports: Mario Kart")
+    .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.");
+}
+
+function updateSportLimit(){
+  const checked = [...document.querySelectorAll('input[name="sports"]:checked')];
+  const visibleUnchecked = [...document.querySelectorAll('input[name="sports"]:not(:checked)')]
+    .filter(cb => !cb.closest(".sport").classList.contains("hidden"));
+
+  visibleUnchecked.forEach(cb => cb.disabled = checked.length >= 2);
+
+  const limitMessage = document.getElementById("sportLimitMessage");
+  if(checked.length >= 2){
+    limitMessage.textContent = "Maximum reached: you selected two sports. Choose which one is your FIRST choice below.";
+    limitMessage.style.display = "block";
+  } else {
+    limitMessage.style.display = "none";
+  }
 }
 
 grade.addEventListener("change", updateGradeSections);
 gender.addEventListener("change", updateGradeSections);
 
 document.querySelectorAll('input[name="sports"]').forEach(cb => {
-  cb.addEventListener("change", updateFirstChoice);
+  cb.addEventListener("change", () => {
+    const selected = [...document.querySelectorAll('input[name="sports"]:checked')];
+    if(selected.length > 2){
+      cb.checked = false;
+      const limitMessage = document.getElementById("sportLimitMessage");
+      limitMessage.textContent = "You may choose a maximum of two sports.";
+      limitMessage.style.display = "block";
+    }
+    updateFirstChoice();
+    updateSportLimit();
+  });
 });
 
 form.addEventListener("reset", () => {
   setTimeout(() => {
-    elementarySection.classList.remove("hidden");
-    jhSection.classList.remove("hidden");
-    document.querySelectorAll(".sport").forEach(card => card.classList.remove("hidden"));
+    document.querySelectorAll(".sport").forEach(card => { card.classList.remove("hidden"); const cb=card.querySelector("input"); if(cb) cb.disabled=false; });
     firstChoice.innerHTML = '<option value="">Select a sport first</option>';
     message.className = "";
     message.style.display = "none";
@@ -569,6 +622,16 @@ form.addEventListener("submit", async (e) => {
 
   if(!sports.length){
     showMessage("Please select at least one sport.", "error");
+    return;
+  }
+
+  if(sports.length > 2){
+    showMessage("Please select no more than two sports.", "error");
+    return;
+  }
+
+  if(!firstChoice.value || !sports.includes(firstChoice.value)){
+    showMessage("Please choose your first-choice sport.", "error");
     return;
   }
 
@@ -590,6 +653,7 @@ form.addEventListener("submit", async (e) => {
     teacher: (data.teacher || "").trim(),
     sports,
     firstChoice: data.firstChoice || "",
+    secondChoice: sports.find(s => s !== data.firstChoice) || "",
     likelihood: data.likelihood || "",
     experience: data.experience || "",
     willingToTryNewSport: data.newSport || "",

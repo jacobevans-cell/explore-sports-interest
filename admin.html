@@ -273,6 +273,7 @@ tr:last-child td{border-bottom:0}
             <th>Teacher</th>
             <th>Sports Selected</th>
             <th>First Choice</th>
+            <th>Second Choice</th>
             <th>Likelihood</th>
             <th>Experience</th>
             <th>Try New Sport</th>
@@ -436,6 +437,7 @@ function renderTable(){
       <td>${escapeHtml(r.teacher||"")}</td>
       <td>${(r.sports||[]).map(s=>`<span class="tag">${escapeHtml(cleanSport(s))}</span>`).join("")}</td>
       <td>${escapeHtml(cleanSport(r.firstChoice||""))}</td>
+      <td>${escapeHtml(cleanSport(r.secondChoice||""))}</td>
       <td>${escapeHtml(r.likelihood||"")}</td>
       <td>${escapeHtml(r.experience||"")}</td>
       <td>${escapeHtml(r.willingToTryNewSport||"")}</td>
@@ -470,7 +472,7 @@ function exportCSV(){
 
     const headers = [
       "First Name","Last Name","Grade","Gender","Teacher","Sports","First Choice","Likelihood",
-      "Experience","Willing To Try New Sport","Comments","Submitted"
+      "Second Choice","Experience","Willing To Try New Sport","Comments","Submitted"
     ];
 
     const data = rows.map(r => [
@@ -481,6 +483,7 @@ function exportCSV(){
       r.teacher || "",
       (r.sports || []).map(cleanSport).join("; "),
       cleanSport(r.firstChoice || ""),
+      cleanSport(r.secondChoice || ""),
       r.likelihood || "",
       r.experience || "",
       r.willingToTryNewSport || "",
@@ -525,7 +528,16 @@ function exportCSV(){
 }
 
 function cleanSport(s){
-  return String(s||"").replace(" - JH","").replace(" - Elementary","").replace(" - All Grades","");
+  return String(s || "")
+    .replace("IYAC Coed Flag Football - Grades 5-8", "IYAC Coed Flag Football")
+    .replace("CAA Boys Volleyball - Grades 4-6", "CAA Boys Volleyball (4–6)")
+    .replace("CAA Boys Volleyball - Grades 6-8", "CAA Boys Volleyball (6–8)")
+    .replace("CAA Girls Flag Football - Grades 4-5", "CAA Girls Flag Football (4–5)")
+    .replace("Internal Esports Mario Kart - Grades 4-8", "Esports: Mario Kart")
+    .replace("Internal Esports Smash Bros - Grades 4-8", "Esports: Smash Bros.")
+    .replace(" - JH","")
+    .replace(" - Elementary","")
+    .replace(" - All Grades","");
 }
 function escapeHtml(v){
   return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
