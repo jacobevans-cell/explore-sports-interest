@@ -10,5 +10,9 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    match /sportsRoster/{studentId} {
+      allow read, create, update: if true;
+      allow delete: if false;
+    }
   }
 }

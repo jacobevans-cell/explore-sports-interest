@@ -271,14 +271,77 @@ button.secondary{background:#ece9f0;color:#4b4056}
       <h2>Student Information</h2>
       <p class="intro">Please use the student's current grade for the 2026–27 school year.</p>
       <div class="grid">
-        <label class="field">
-          First Name *
-          <input type="text" name="firstName" required autocomplete="given-name">
-        </label>
-
-        <label class="field">
-          Last Name *
-          <input type="text" name="lastName" required autocomplete="family-name">
+        <label class="field full">
+          Student Name *
+          <select name="studentName" id="studentName" required>
+            <option value="">Choose your name</option>
+            <optgroup label="Grades 4–5">
+              <option value="Kataleya Eichberger">Kataleya Eichberger</option>
+              <option value="Damian Haro">Damian Haro</option>
+              <option value="Grayson Johnert">Grayson Johnert</option>
+              <option value="Jeshua Morris">Jeshua Morris</option>
+              <option value="Nala Parker">Nala Parker</option>
+              <option value="Niyane Parker">Niyane Parker</option>
+              <option value="Tristan Ruth">Tristan Ruth</option>
+              <option value="Samuel Seeker">Samuel Seeker</option>
+              <option value="Frank Sheldone">Frank Sheldone</option>
+              <option value="Christian Smith">Christian Smith</option>
+              <option value="Kade Stula">Kade Stula</option>
+              <option value="Marli Thompson">Marli Thompson</option>
+              <option value="Alaina Wilson">Alaina Wilson</option>
+              <option value="Sulaiman Abdulle">Sulaiman Abdulle</option>
+              <option value="Alejandro Brito-Rivera">Alejandro Brito-Rivera</option>
+              <option value="Zander Carmack">Zander Carmack</option>
+              <option value="Abigail Conner">Abigail Conner</option>
+              <option value="Joshua Giddens">Joshua Giddens</option>
+              <option value="Harrison Hall">Harrison Hall</option>
+              <option value="Aliya Montchery">Aliya Montchery</option>
+              <option value="Caleb Pelkey">Caleb Pelkey</option>
+              <option value="Jacob Perez">Jacob Perez</option>
+              <option value="Krystal Thompson">Krystal Thompson</option>
+              <option value="Lilian Walbecq">Lilian Walbecq</option>
+              <option value="Whitney Wright">Whitney Wright</option>
+              <option value="Larissa Almazo">Larissa Almazo</option>
+            </optgroup>
+            <optgroup label="Middle School">
+              <option value="Leonardo Aclopotoaei">Leonardo Aclopotoaei</option>
+              <option value="Luxanna Argueta">Luxanna Argueta</option>
+              <option value="Elijah Daniels">Elijah Daniels</option>
+              <option value="Howard Harris">Howard Harris</option>
+              <option value="Alden Joseph">Alden Joseph</option>
+              <option value="Zariah Martens">Zariah Martens</option>
+              <option value="Kilian Moore">Kilian Moore</option>
+              <option value="Rylee Olson">Rylee Olson</option>
+              <option value="Celestina Perez">Celestina Perez</option>
+              <option value="Zuri Radford">Zuri Radford</option>
+              <option value="Rebelle Sheldone">Rebelle Sheldone</option>
+              <option value="Andi Woods">Andi Woods</option>
+              <option value="Wyatt Crawford">Wyatt Crawford</option>
+              <option value="Chelsea Crick">Chelsea Crick</option>
+              <option value="Gabrielle Pelkey">Gabrielle Pelkey</option>
+              <option value="Sadie Tharp">Sadie Tharp</option>
+              <option value="Avery Woods">Avery Woods</option>
+              <option value="Samuel Annor">Samuel Annor</option>
+              <option value="Rhylan Becker">Rhylan Becker</option>
+              <option value="Oliver Coble">Oliver Coble</option>
+              <option value="Elijah Collinsworth">Elijah Collinsworth</option>
+              <option value="Emma Doan">Emma Doan</option>
+              <option value="Gavin Giles">Gavin Giles</option>
+              <option value="Jeslynn Guerrero">Jeslynn Guerrero</option>
+              <option value="Adalia Joseph">Adalia Joseph</option>
+              <option value="Nathanael Perez">Nathanael Perez</option>
+              <option value="Jonah Ponseti">Jonah Ponseti</option>
+              <option value="Antoine Roberts">Antoine Roberts</option>
+              <option value="Sergey Shimunov">Sergey Shimunov</option>
+              <option value="Molly Smithson">Molly Smithson</option>
+              <option value="Anthony Stewart">Anthony Stewart</option>
+              <option value="Landon Stula">Landon Stula</option>
+              <option value="Dante Yazzie">Dante Yazzie</option>
+              <option value="Daynell Yazzie">Daynell Yazzie</option>
+            </optgroup>
+          </select>
+          <input type="hidden" name="firstName" id="firstName">
+          <input type="hidden" name="lastName" id="lastName">
         </label>
 
         <label class="field">
@@ -456,7 +519,8 @@ import {
   getFirestore,
   collection,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import {
   getAuth,
@@ -501,6 +565,9 @@ async function connectFirebase() {
 connectFirebase();
 
 const form = document.getElementById("sportsForm");
+const studentName = document.getElementById("studentName");
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
 const grade = document.getElementById("grade");
 const gender = document.getElementById("gender");
 const firstChoice = document.getElementById("firstChoice");
@@ -510,6 +577,48 @@ function showMessage(text, type) {
   message.textContent = text;
   message.className = type;
 }
+
+
+const STATIC_ROSTER = [{"name": "Kataleya Eichberger", "division": "4-5"}, {"name": "Damian Haro", "division": "4-5"}, {"name": "Grayson Johnert", "division": "4-5"}, {"name": "Jeshua Morris", "division": "4-5"}, {"name": "Nala Parker", "division": "4-5"}, {"name": "Niyane Parker", "division": "4-5"}, {"name": "Tristan Ruth", "division": "4-5"}, {"name": "Samuel Seeker", "division": "4-5"}, {"name": "Frank Sheldone", "division": "4-5"}, {"name": "Christian Smith", "division": "4-5"}, {"name": "Kade Stula", "division": "4-5"}, {"name": "Marli Thompson", "division": "4-5"}, {"name": "Alaina Wilson", "division": "4-5"}, {"name": "Sulaiman Abdulle", "division": "4-5"}, {"name": "Alejandro Brito-Rivera", "division": "4-5"}, {"name": "Zander Carmack", "division": "4-5"}, {"name": "Abigail Conner", "division": "4-5"}, {"name": "Joshua Giddens", "division": "4-5"}, {"name": "Harrison Hall", "division": "4-5"}, {"name": "Aliya Montchery", "division": "4-5"}, {"name": "Caleb Pelkey", "division": "4-5"}, {"name": "Jacob Perez", "division": "4-5"}, {"name": "Krystal Thompson", "division": "4-5"}, {"name": "Lilian Walbecq", "division": "4-5"}, {"name": "Whitney Wright", "division": "4-5"}, {"name": "Larissa Almazo", "division": "4-5"}, {"name": "Leonardo Aclopotoaei", "division": "MS"}, {"name": "Luxanna Argueta", "division": "MS"}, {"name": "Elijah Daniels", "division": "MS"}, {"name": "Howard Harris", "division": "MS"}, {"name": "Alden Joseph", "division": "MS"}, {"name": "Zariah Martens", "division": "MS"}, {"name": "Kilian Moore", "division": "MS"}, {"name": "Rylee Olson", "division": "MS"}, {"name": "Celestina Perez", "division": "MS"}, {"name": "Zuri Radford", "division": "MS"}, {"name": "Rebelle Sheldone", "division": "MS"}, {"name": "Andi Woods", "division": "MS"}, {"name": "Wyatt Crawford", "division": "MS"}, {"name": "Chelsea Crick", "division": "MS"}, {"name": "Gabrielle Pelkey", "division": "MS"}, {"name": "Sadie Tharp", "division": "MS"}, {"name": "Avery Woods", "division": "MS"}, {"name": "Samuel Annor", "division": "MS"}, {"name": "Rhylan Becker", "division": "MS"}, {"name": "Oliver Coble", "division": "MS"}, {"name": "Elijah Collinsworth", "division": "MS"}, {"name": "Emma Doan", "division": "MS"}, {"name": "Gavin Giles", "division": "MS"}, {"name": "Jeslynn Guerrero", "division": "MS"}, {"name": "Adalia Joseph", "division": "MS"}, {"name": "Nathanael Perez", "division": "MS"}, {"name": "Jonah Ponseti", "division": "MS"}, {"name": "Antoine Roberts", "division": "MS"}, {"name": "Sergey Shimunov", "division": "MS"}, {"name": "Molly Smithson", "division": "MS"}, {"name": "Anthony Stewart", "division": "MS"}, {"name": "Landon Stula", "division": "MS"}, {"name": "Dante Yazzie", "division": "MS"}, {"name": "Daynell Yazzie", "division": "MS"}];
+let rosterMeta = {};
+
+async function loadRosterMeta(){
+  try{
+    const snap = await getDocs(collection(db, "sportsRoster"));
+    snap.forEach(d => {
+      const data = d.data();
+      if(data.name) rosterMeta[data.name] = data;
+    });
+  }catch(err){
+    console.warn("Roster metadata unavailable:", err);
+  }
+}
+
+function splitName(full){
+  const parts = String(full || "").trim().split(/\s+/);
+  return {
+    first: parts.shift() || "",
+    last: parts.join(" ")
+  };
+}
+
+function applyStudentProfile(){
+  const full = studentName.value;
+  const parts = splitName(full);
+  firstName.value = parts.first;
+  lastName.value = parts.last;
+
+  const meta = rosterMeta[full];
+  if(meta){
+    if(meta.grade) grade.value = String(meta.grade);
+    if(meta.gender) gender.value = meta.gender;
+  }
+
+  updateGradeSections();
+}
+
+studentName.addEventListener("change", applyStudentProfile);
+loadRosterMeta();
 
 function updateGradeSections(){
   const g = Number(grade.value);
@@ -643,6 +752,7 @@ form.addEventListener("submit", async (e) => {
   const data = Object.fromEntries(new FormData(form).entries());
 
   const response = {
+    studentName: (data.studentName || "").trim(),
     studentFirstName: (data.firstName || "").trim(),
     studentLastName: (data.lastName || "").trim(),
     grade: data.grade || "",

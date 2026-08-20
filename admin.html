@@ -238,6 +238,37 @@ tr:last-child td{border-bottom:0}
     </div>
   </section>
 
+  <section class="card" style="margin-bottom:16px">
+    <h2>Roster Setup</h2>
+    <p class="intro">Set grade and gender in batches. Once saved, the student form can auto-fill eligibility from the selected name.</p>
+
+    <div class="controls" style="grid-template-columns:1fr 1fr 1fr auto auto">
+      <select id="rosterDivisionFilter">
+        <option value="">All roster groups</option>
+        <option value="4-5">Grades 4–5 roster</option>
+        <option value="MS">Middle School roster</option>
+      </select>
+      <select id="bulkGrade">
+        <option value="">Assign grade...</option>
+        <option value="4">4th Grade</option>
+        <option value="5">5th Grade</option>
+        <option value="6">6th Grade</option>
+        <option value="7">7th Grade</option>
+        <option value="8">8th Grade</option>
+      </select>
+      <select id="bulkGender">
+        <option value="">Assign gender...</option>
+        <option value="Boy">Boy</option>
+        <option value="Girl">Girl</option>
+      </select>
+      <button id="selectVisibleRoster" class="btn-muted">Select Visible</button>
+      <button id="saveRosterBatch" class="btn-primary">Apply to Selected</button>
+    </div>
+
+    <div id="rosterStatus" class="status"></div>
+    <div id="rosterGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px"></div>
+  </section>
+
   <section class="card">
     <h2>Student Responses</h2>
     <div class="controls">
@@ -293,7 +324,7 @@ tr:last-child td{border-bottom:0}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc
+  getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
@@ -326,6 +357,95 @@ exportBtn.style.display = "";
 exportBtn.addEventListener("click", exportCSV);
 clearAllBtn.addEventListener("click", clearAllResponses);
 loadResponses();
+
+
+const STATIC_ROSTER = [{"name": "Kataleya Eichberger", "division": "4-5"}, {"name": "Damian Haro", "division": "4-5"}, {"name": "Grayson Johnert", "division": "4-5"}, {"name": "Jeshua Morris", "division": "4-5"}, {"name": "Nala Parker", "division": "4-5"}, {"name": "Niyane Parker", "division": "4-5"}, {"name": "Tristan Ruth", "division": "4-5"}, {"name": "Samuel Seeker", "division": "4-5"}, {"name": "Frank Sheldone", "division": "4-5"}, {"name": "Christian Smith", "division": "4-5"}, {"name": "Kade Stula", "division": "4-5"}, {"name": "Marli Thompson", "division": "4-5"}, {"name": "Alaina Wilson", "division": "4-5"}, {"name": "Sulaiman Abdulle", "division": "4-5"}, {"name": "Alejandro Brito-Rivera", "division": "4-5"}, {"name": "Zander Carmack", "division": "4-5"}, {"name": "Abigail Conner", "division": "4-5"}, {"name": "Joshua Giddens", "division": "4-5"}, {"name": "Harrison Hall", "division": "4-5"}, {"name": "Aliya Montchery", "division": "4-5"}, {"name": "Caleb Pelkey", "division": "4-5"}, {"name": "Jacob Perez", "division": "4-5"}, {"name": "Krystal Thompson", "division": "4-5"}, {"name": "Lilian Walbecq", "division": "4-5"}, {"name": "Whitney Wright", "division": "4-5"}, {"name": "Larissa Almazo", "division": "4-5"}, {"name": "Leonardo Aclopotoaei", "division": "MS"}, {"name": "Luxanna Argueta", "division": "MS"}, {"name": "Elijah Daniels", "division": "MS"}, {"name": "Howard Harris", "division": "MS"}, {"name": "Alden Joseph", "division": "MS"}, {"name": "Zariah Martens", "division": "MS"}, {"name": "Kilian Moore", "division": "MS"}, {"name": "Rylee Olson", "division": "MS"}, {"name": "Celestina Perez", "division": "MS"}, {"name": "Zuri Radford", "division": "MS"}, {"name": "Rebelle Sheldone", "division": "MS"}, {"name": "Andi Woods", "division": "MS"}, {"name": "Wyatt Crawford", "division": "MS"}, {"name": "Chelsea Crick", "division": "MS"}, {"name": "Gabrielle Pelkey", "division": "MS"}, {"name": "Sadie Tharp", "division": "MS"}, {"name": "Avery Woods", "division": "MS"}, {"name": "Samuel Annor", "division": "MS"}, {"name": "Rhylan Becker", "division": "MS"}, {"name": "Oliver Coble", "division": "MS"}, {"name": "Elijah Collinsworth", "division": "MS"}, {"name": "Emma Doan", "division": "MS"}, {"name": "Gavin Giles", "division": "MS"}, {"name": "Jeslynn Guerrero", "division": "MS"}, {"name": "Adalia Joseph", "division": "MS"}, {"name": "Nathanael Perez", "division": "MS"}, {"name": "Jonah Ponseti", "division": "MS"}, {"name": "Antoine Roberts", "division": "MS"}, {"name": "Sergey Shimunov", "division": "MS"}, {"name": "Molly Smithson", "division": "MS"}, {"name": "Anthony Stewart", "division": "MS"}, {"name": "Landon Stula", "division": "MS"}, {"name": "Dante Yazzie", "division": "MS"}, {"name": "Daynell Yazzie", "division": "MS"}];
+let rosterMeta = {};
+
+function rosterId(name){
+  return name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+
+async function loadRosterSetup(){
+  rosterMeta = {};
+  try{
+    const snap = await getDocs(collection(db,"sportsRoster"));
+    snap.forEach(d => {
+      const data = d.data();
+      if(data.name) rosterMeta[data.name] = data;
+    });
+  }catch(err){
+    console.error(err);
+  }
+  renderRosterGrid();
+}
+
+function renderRosterGrid(){
+  const target = document.getElementById("rosterGrid");
+  const division = document.getElementById("rosterDivisionFilter").value;
+  const visible = STATIC_ROSTER.filter(s => !division || s.division === division);
+
+  target.innerHTML = visible.map(s => {
+    const meta = rosterMeta[s.name] || {};
+    const detail = [meta.grade ? `Grade ${meta.grade}` : "Grade not set", meta.gender || "Gender not set"].join(" • ");
+    return `<label class="sport" style="align-items:center">
+      <input type="checkbox" class="rosterCheck" value="${escapeAttr(s.name)}">
+      <span><strong>${escapeHtml(s.name)}</strong><small>${escapeHtml(s.division === "4-5" ? "4–5 Roster" : "Middle School")} • ${escapeHtml(detail)}</small></span>
+    </label>`;
+  }).join("");
+}
+
+document.getElementById("rosterDivisionFilter").addEventListener("change", renderRosterGrid);
+
+document.getElementById("selectVisibleRoster").addEventListener("click", () => {
+  const checks = [...document.querySelectorAll(".rosterCheck")];
+  const shouldCheck = checks.some(cb => !cb.checked);
+  checks.forEach(cb => cb.checked = shouldCheck);
+});
+
+document.getElementById("saveRosterBatch").addEventListener("click", async () => {
+  const selected = [...document.querySelectorAll(".rosterCheck:checked")].map(cb => cb.value);
+  const gradeVal = document.getElementById("bulkGrade").value;
+  const genderVal = document.getElementById("bulkGender").value;
+  const rs = document.getElementById("rosterStatus");
+
+  if(!selected.length){
+    rs.textContent = "Select at least one student.";
+    rs.className = "status error";
+    return;
+  }
+  if(!gradeVal && !genderVal){
+    rs.textContent = "Choose a grade, a gender, or both to apply.";
+    rs.className = "status error";
+    return;
+  }
+
+  rs.textContent = `Saving ${selected.length} student${selected.length===1?"":"s"}...`;
+  rs.className = "status ok";
+
+  try{
+    for(const name of selected){
+      const existing = rosterMeta[name] || {};
+      const source = STATIC_ROSTER.find(s => s.name === name) || {};
+      const payload = {
+        name,
+        division: source.division || existing.division || "",
+        grade: gradeVal || existing.grade || "",
+        gender: genderVal || existing.gender || ""
+      };
+      await setDoc(doc(db,"sportsRoster",rosterId(name)),payload,{merge:true});
+    }
+    rs.textContent = `Saved ${selected.length} student${selected.length===1?"":"s"}.`;
+    rs.className = "status ok";
+    await loadRosterSetup();
+  }catch(err){
+    console.error(err);
+    rs.textContent = "Could not save roster setup. Check Firestore rules.";
+    rs.className = "status error";
+  }
+});
+
+loadRosterSetup();
 
 async function loadResponses(){
   status.textContent = "Loading responses...";

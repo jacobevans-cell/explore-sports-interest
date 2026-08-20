@@ -45,3 +45,15 @@ CLEAR ALL RESPONSES BUTTON
 - The included firestore.rules allows deletes from the season2SportsInterest collection.
 - IMPORTANT: Because the dashboard is not login-protected, delete access is also not identity-restricted. The typed confirmation prevents accidents but is not true access control.
 - Publish the updated firestore.rules before using the clear button.
+
+
+ROSTER SETUP
+- The supplied Grades 4–5 and Middle School rosters are preloaded into index.html and admin.html.
+- Admin Dashboard > Roster Setup lets you multi-select students.
+- Choose a grade, gender, or both, then click Apply to Selected.
+- Use the roster-group filter and Select Visible for batch work.
+- Student form now uses a student-name dropdown.
+- If roster metadata has been saved, grade and gender auto-fill when a student chooses their name.
+- If metadata has not been saved yet, grade/gender remain manually selectable.
+- Roster metadata is stored in Firestore collection: sportsRoster.
+- Publish the included updated firestore.rules before using Roster Setup.
