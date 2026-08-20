@@ -294,6 +294,15 @@ button.secondary{background:#ece9f0;color:#4b4056}
         </label>
 
         <label class="field">
+          Student Gender *
+          <select name="gender" id="gender" required>
+            <option value="">Choose one</option>
+            <option value="Boy">Boy</option>
+            <option value="Girl">Girl</option>
+          </select>
+        </label>
+
+        <label class="field">
           Homeroom / Teacher <span class="optional">(optional)</span>
           <input type="text" name="teacher">
         </label>
@@ -307,11 +316,11 @@ button.secondary{background:#ece9f0;color:#4b4056}
       <div id="elementarySection">
         <div class="group-title">Elementary Season 2</div>
         <div class="sports">
-          <label class="sport">
+          <label class="sport" data-gender="girl">
             <input type="checkbox" name="sports" value="Girls Flag Football - Elementary">
             <span><strong>Girls Flag Football</strong><small>Elementary</small></span>
           </label>
-          <label class="sport">
+          <label class="sport" data-gender="boy">
             <input type="checkbox" name="sports" value="Boys Volleyball - Elementary">
             <span><strong>Boys Volleyball</strong><small>Elementary</small></span>
           </label>
@@ -321,16 +330,16 @@ button.secondary{background:#ece9f0;color:#4b4056}
       <div id="jhSection">
         <div class="group-title">Junior High Season 2</div>
         <div class="sports">
-          <label class="sport"><input type="checkbox" name="sports" value="Boys Volleyball - JH"><span><strong>Boys Volleyball</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Girls Softball - JH"><span><strong>Girls Softball</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Girls Wrestling - JH"><span><strong>Girls Wrestling</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Boys Wrestling - JH"><span><strong>Boys Wrestling</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Girls Flag Football - JH"><span><strong>Girls Flag Football</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="7v7 Passing League - JH"><span><strong>7v7 Passing League</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Boys Tennis - JH"><span><strong>Boys Tennis</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Girls Tennis - JH"><span><strong>Girls Tennis</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Esports Mario Kart - JH"><span><strong>Esports: Mario Kart</strong><small>Junior High</small></span></label>
-          <label class="sport"><input type="checkbox" name="sports" value="Esports Smash Bros - JH"><span><strong>Esports: Smash Bros.</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Volleyball - JH"><span><strong>Boys Volleyball</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Softball - JH"><span><strong>Girls Softball</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Wrestling - JH"><span><strong>Girls Wrestling</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Wrestling - JH"><span><strong>Boys Wrestling</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Flag Football - JH"><span><strong>Girls Flag Football</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="7v7 Passing League - JH"><span><strong>7v7 Passing League</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Tennis - JH"><span><strong>Boys Tennis</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Tennis - JH"><span><strong>Girls Tennis</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="Esports Mario Kart - JH"><span><strong>Esports: Mario Kart</strong><small>Junior High</small></span></label>
+          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="Esports Smash Bros - JH"><span><strong>Esports: Smash Bros.</strong><small>Junior High</small></span></label>
         </div>
       </div>
 
@@ -460,6 +469,7 @@ connectFirebase();
 
 const form = document.getElementById("sportsForm");
 const grade = document.getElementById("grade");
+const gender = document.getElementById("gender");
 const elementarySection = document.getElementById("elementarySection");
 const jhSection = document.getElementById("jhSection");
 const firstChoice = document.getElementById("firstChoice");
@@ -472,6 +482,7 @@ function showMessage(text, type) {
 
 function updateGradeSections(){
   const g = Number(grade.value);
+  const selectedGender = gender.value.toLowerCase();
 
   // Elementary sports displayed for grades 4–6.
   elementarySection.classList.toggle("hidden", g >= 7);
@@ -480,8 +491,18 @@ function updateGradeSections(){
   // Grade 6 can therefore see both groups.
   jhSection.classList.toggle("hidden", g > 0 && g <= 5);
 
-  document.querySelectorAll('input[name="sports"]').forEach(cb => {
-    if (cb.closest(".hidden")) cb.checked = false;
+  document.querySelectorAll(".sport").forEach(card => {
+    const allowed = card.dataset.gender || "coed";
+    const genderMatch =
+      !selectedGender ||
+      allowed === "coed" ||
+      allowed === selectedGender;
+
+    const sectionHidden = card.closest("#elementarySection, #jhSection")?.classList.contains("hidden");
+    card.classList.toggle("hidden", !genderMatch);
+
+    const cb = card.querySelector('input[name="sports"]');
+    if (cb && (!genderMatch || sectionHidden)) cb.checked = false;
   });
 
   updateFirstChoice();
@@ -505,6 +526,7 @@ function updateFirstChoice(){
 }
 
 grade.addEventListener("change", updateGradeSections);
+gender.addEventListener("change", updateGradeSections);
 
 document.querySelectorAll('input[name="sports"]').forEach(cb => {
   cb.addEventListener("change", updateFirstChoice);
@@ -514,6 +536,7 @@ form.addEventListener("reset", () => {
   setTimeout(() => {
     elementarySection.classList.remove("hidden");
     jhSection.classList.remove("hidden");
+    document.querySelectorAll(".sport").forEach(card => card.classList.remove("hidden"));
     firstChoice.innerHTML = '<option value="">Select a sport first</option>';
     message.className = "";
     message.style.display = "none";
@@ -546,6 +569,7 @@ form.addEventListener("submit", async (e) => {
     studentFirstName: (data.firstName || "").trim(),
     studentLastName: (data.lastName || "").trim(),
     grade: data.grade || "",
+    gender: data.gender || "",
     teacher: (data.teacher || "").trim(),
     sports,
     firstChoice: data.firstChoice || "",

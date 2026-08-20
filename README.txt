@@ -33,3 +33,11 @@ season2SportsInterest
 
 Important
 The included Firestore rules allow public read access to this one collection because that is the access model requested for this project. Anyone capable of querying the Firebase project can technically read the collection. Update the rules later if you decide to restrict dashboard access.
+
+
+Gender eligibility
+- Boys only see boys-designated and coed sports.
+- Girls only see girls-designated and coed sports.
+- 7v7 Passing League is currently configured as coed.
+- Esports Mario Kart and Smash Bros are configured as coed.
+- Grade 6 can see both Elementary and Junior High categories when applicable.

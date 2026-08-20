@@ -249,6 +249,11 @@ tr:last-child td{border-bottom:0}
         <option value="7">7th</option>
         <option value="8">8th</option>
       </select>
+      <select id="genderFilter">
+        <option value="">All students</option>
+        <option value="Boy">Boys</option>
+        <option value="Girl">Girls</option>
+      </select>
       <select id="likelihoodFilter">
         <option value="">All likelihoods</option>
         <option value="Definitely">Definitely</option>
@@ -264,6 +269,7 @@ tr:last-child td{border-bottom:0}
           <tr>
             <th>Student</th>
             <th>Grade</th>
+            <th>Gender</th>
             <th>Teacher</th>
             <th>Sports Selected</th>
             <th>First Choice</th>
@@ -392,11 +398,13 @@ function renderAll(){
 function getFiltered(){
   const q = document.getElementById("searchBox").value.trim().toLowerCase();
   const grade = document.getElementById("gradeFilter").value;
+  const gender = document.getElementById("genderFilter").value;
   const likelihood = document.getElementById("likelihoodFilter").value;
   const sport = document.getElementById("sportFilter").value;
 
   return allResponses.filter(r => {
     if(grade && String(r.grade)!==grade) return false;
+    if(gender && r.gender!==gender) return false;
     if(likelihood && r.likelihood!==likelihood) return false;
     if(sport && !(r.sports||[]).includes(sport)) return false;
 
@@ -423,6 +431,7 @@ function renderTable(){
     return `<tr>
       <td><strong>${escapeHtml(`${r.studentFirstName||""} ${r.studentLastName||""}`.trim())}</strong></td>
       <td>${escapeHtml(r.grade||"")}</td>
+      <td>${escapeHtml(r.gender||"")}</td>
       <td>${escapeHtml(r.teacher||"")}</td>
       <td>${(r.sports||[]).map(s=>`<span class="tag">${escapeHtml(cleanSport(s))}</span>`).join("")}</td>
       <td>${escapeHtml(cleanSport(r.firstChoice||""))}</td>
@@ -435,13 +444,14 @@ function renderTable(){
   }).join("");
 }
 
-["searchBox","gradeFilter","likelihoodFilter","sportFilter"].forEach(id=>{
+["searchBox","gradeFilter","genderFilter","likelihoodFilter","sportFilter"].forEach(id=>{
   document.getElementById(id).addEventListener(id==="searchBox" ? "input" : "change", renderTable);
 });
 
 document.getElementById("clearFilters").addEventListener("click",()=>{
   document.getElementById("searchBox").value="";
   document.getElementById("gradeFilter").value="";
+  document.getElementById("genderFilter").value="";
   document.getElementById("likelihoodFilter").value="";
   document.getElementById("sportFilter").value="";
   renderTable();
@@ -450,11 +460,11 @@ document.getElementById("clearFilters").addEventListener("click",()=>{
 function exportCSV(){
   const rows = getFiltered();
   const headers = [
-    "First Name","Last Name","Grade","Teacher","Sports","First Choice","Likelihood",
+    "First Name","Last Name","Grade","Gender","Teacher","Sports","First Choice","Likelihood",
     "Experience","Willing To Try New Sport","Comments","Submitted"
   ];
   const data = rows.map(r => [
-    r.studentFirstName||"", r.studentLastName||"", r.grade||"", r.teacher||"",
+    r.studentFirstName||"", r.studentLastName||"", r.grade||"", r.gender||"", r.teacher||"",
     (r.sports||[]).map(cleanSport).join("; "), cleanSport(r.firstChoice||""), r.likelihood||"",
     r.experience||"", r.willingToTryNewSport||"", r.comments||"",
     r.submittedAt?.toDate ? r.submittedAt.toDate().toLocaleString() : ""
