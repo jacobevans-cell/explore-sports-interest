@@ -57,3 +57,16 @@ ROSTER SETUP
 - If metadata has not been saved yet, grade/gender remain manually selectable.
 - Roster metadata is stored in Firestore collection: sportsRoster.
 - Publish the included updated firestore.rules before using Roster Setup.
+
+
+V6 BULK RESPONSE ENTRY
+- Roster Setup now includes grade, gender, and name filters.
+- Example workflow:
+  1. Filter Grade 4.
+  2. Filter Girls.
+  3. Click Select Filtered.
+  4. Choose CAA Girls Flag Football.
+  5. Click Create Responses.
+- One Firestore response is created for every selected student.
+- Eligibility is checked before the records are created.
+- You can also assign one first choice plus one second choice to the whole selected batch.

@@ -266,7 +266,65 @@ tr:last-child td{border-bottom:0}
     </div>
 
     <div id="rosterStatus" class="status"></div>
+
+    <div class="controls" style="grid-template-columns:1fr 1fr 1fr auto;margin-top:12px">
+      <select id="rosterGradeFilter">
+        <option value="">All grades</option>
+        <option value="4">4th Grade</option>
+        <option value="5">5th Grade</option>
+        <option value="6">6th Grade</option>
+        <option value="7">7th Grade</option>
+        <option value="8">8th Grade</option>
+      </select>
+      <select id="rosterGenderFilter">
+        <option value="">All genders</option>
+        <option value="Boy">Boys</option>
+        <option value="Girl">Girls</option>
+      </select>
+      <input id="rosterSearch" type="search" placeholder="Search roster...">
+      <button id="selectFilteredRoster" class="btn-muted">Select Filtered</button>
+    </div>
+
     <div id="rosterGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px"></div>
+
+    <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
+      <h2 style="font-size:17px;margin-bottom:8px">Bulk Add Interest Responses</h2>
+      <p class="intro">
+        Select students above, then create the same sports-interest record for the entire selected group.
+      </p>
+
+      <div class="controls" style="grid-template-columns:1.4fr 1.4fr 1fr auto">
+        <select id="bulkFirstSport">
+          <option value="">First-choice sport...</option>
+          <option value="IYAC Coed Flag Football - Grades 5-8">IYAC Coed Flag Football (5–8)</option>
+          <option value="CAA Boys Volleyball">CAA Boys Volleyball</option>
+          <option value="CAA Girls Flag Football - Grades 4-5">CAA Girls Flag Football (4–5)</option>
+          <option value="Internal Esports Mario Kart - Grades 4-8">Esports: Mario Kart</option>
+          <option value="Internal Esports Smash Bros - Grades 4-8">Esports: Smash Bros.</option>
+          <option value="Internal Chess - Grades 4-8">Chess</option>
+        </select>
+
+        <select id="bulkSecondSport">
+          <option value="">No second choice</option>
+          <option value="IYAC Coed Flag Football - Grades 5-8">IYAC Coed Flag Football (5–8)</option>
+          <option value="CAA Boys Volleyball">CAA Boys Volleyball</option>
+          <option value="CAA Girls Flag Football - Grades 4-5">CAA Girls Flag Football (4–5)</option>
+          <option value="Internal Esports Mario Kart - Grades 4-8">Esports: Mario Kart</option>
+          <option value="Internal Esports Smash Bros - Grades 4-8">Esports: Smash Bros.</option>
+          <option value="Internal Chess - Grades 4-8">Chess</option>
+        </select>
+
+        <select id="bulkLikelihood">
+          <option value="Definitely">Definitely</option>
+          <option value="Probably">Probably</option>
+          <option value="Maybe">Maybe</option>
+        </select>
+
+        <button id="createBulkResponses" class="btn-primary">Create Responses</button>
+      </div>
+
+      <div id="bulkResponseStatus" class="status"></div>
+    </div>
   </section>
 
   <section class="card">
@@ -324,7 +382,7 @@ tr:last-child td{border-bottom:0}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, setDoc
+  getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, setDoc, addDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
@@ -380,22 +438,52 @@ async function loadRosterSetup(){
   renderRosterGrid();
 }
 
+function getVisibleRoster(){
+  const division = document.getElementById("rosterDivisionFilter").value;
+  const gradeFilter = document.getElementById("rosterGradeFilter").value;
+  const genderFilter = document.getElementById("rosterGenderFilter").value;
+  const search = document.getElementById("rosterSearch").value.trim().toLowerCase();
+
+  return STATIC_ROSTER.filter(s => {
+    const meta = rosterMeta[s.name] || {};
+    if(division && s.division !== division) return false;
+    if(gradeFilter && String(meta.grade || "") !== gradeFilter) return false;
+    if(genderFilter && String(meta.gender || "") !== genderFilter) return false;
+    if(search && !s.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
 function renderRosterGrid(){
   const target = document.getElementById("rosterGrid");
-  const division = document.getElementById("rosterDivisionFilter").value;
-  const visible = STATIC_ROSTER.filter(s => !division || s.division === division);
+  const visible = getVisibleRoster();
 
   target.innerHTML = visible.map(s => {
     const meta = rosterMeta[s.name] || {};
-    const detail = [meta.grade ? `Grade ${meta.grade}` : "Grade not set", meta.gender || "Gender not set"].join(" • ");
+    const detail = [
+      meta.grade ? `Grade ${meta.grade}` : "Grade not set",
+      meta.gender || "Gender not set"
+    ].join(" • ");
+
     return `<label class="sport" style="align-items:center">
       <input type="checkbox" class="rosterCheck" value="${escapeAttr(s.name)}">
-      <span><strong>${escapeHtml(s.name)}</strong><small>${escapeHtml(s.division === "4-5" ? "4–5 Roster" : "Middle School")} • ${escapeHtml(detail)}</small></span>
+      <span>
+        <strong>${escapeHtml(s.name)}</strong>
+        <small>${escapeHtml(s.division === "4-5" ? "4–5 Roster" : "Middle School")} • ${escapeHtml(detail)}</small>
+      </span>
     </label>`;
   }).join("");
 }
-
 document.getElementById("rosterDivisionFilter").addEventListener("change", renderRosterGrid);
+document.getElementById("rosterGradeFilter").addEventListener("change", renderRosterGrid);
+document.getElementById("rosterGenderFilter").addEventListener("change", renderRosterGrid);
+document.getElementById("rosterSearch").addEventListener("input", renderRosterGrid);
+
+document.getElementById("selectFilteredRoster").addEventListener("click", () => {
+  const checks = [...document.querySelectorAll(".rosterCheck")];
+  const shouldCheck = checks.some(cb => !cb.checked);
+  checks.forEach(cb => cb.checked = shouldCheck);
+});
 
 document.getElementById("selectVisibleRoster").addEventListener("click", () => {
   const checks = [...document.querySelectorAll(".rosterCheck")];
@@ -437,7 +525,139 @@ document.getElementById("saveRosterBatch").addEventListener("click", async () =>
     }
     rs.textContent = `Saved ${selected.length} student${selected.length===1?"":"s"}.`;
     rs.className = "status ok";
-    await loadRosterSetup();
+    await 
+function sportEligible(meta, sport){
+  const grade = Number(meta.grade || 0);
+  const gender = String(meta.gender || "");
+
+  if(sport === "IYAC Coed Flag Football - Grades 5-8"){
+    return grade >= 5 && grade <= 8;
+  }
+  if(sport === "CAA Boys Volleyball"){
+    return gender === "Boy" && grade >= 4 && grade <= 8;
+  }
+  if(sport === "CAA Girls Flag Football - Grades 4-5"){
+    return gender === "Girl" && grade >= 4 && grade <= 5;
+  }
+  if([
+    "Internal Esports Mario Kart - Grades 4-8",
+    "Internal Esports Smash Bros - Grades 4-8",
+    "Internal Chess - Grades 4-8"
+  ].includes(sport)){
+    return grade >= 4 && grade <= 8;
+  }
+  return false;
+}
+
+function splitRosterName(full){
+  const parts = String(full || "").trim().split(/\s+/);
+  return {
+    first: parts.shift() || "",
+    last: parts.join(" ")
+  };
+}
+
+document.getElementById("createBulkResponses").addEventListener("click", async () => {
+  const selected = [...document.querySelectorAll(".rosterCheck:checked")].map(cb => cb.value);
+  const firstSport = document.getElementById("bulkFirstSport").value;
+  const secondSport = document.getElementById("bulkSecondSport").value;
+  const likelihood = document.getElementById("bulkLikelihood").value;
+  const bs = document.getElementById("bulkResponseStatus");
+
+  if(!selected.length){
+    bs.textContent = "Select at least one student above.";
+    bs.className = "status error";
+    return;
+  }
+
+  if(!firstSport){
+    bs.textContent = "Choose a first-choice sport.";
+    bs.className = "status error";
+    return;
+  }
+
+  if(secondSport && secondSport === firstSport){
+    bs.textContent = "First and second choice cannot be the same sport.";
+    bs.className = "status error";
+    return;
+  }
+
+  const missingMeta = selected.filter(name => {
+    const meta = rosterMeta[name] || {};
+    return !meta.grade || !meta.gender;
+  });
+
+  if(missingMeta.length){
+    bs.textContent = `Set grade and gender first for: ${missingMeta.join(", ")}`;
+    bs.className = "status error";
+    return;
+  }
+
+  const ineligible = selected.filter(name => {
+    const meta = rosterMeta[name];
+    if(!sportEligible(meta, firstSport)) return true;
+    if(secondSport && !sportEligible(meta, secondSport)) return true;
+    return false;
+  });
+
+  if(ineligible.length){
+    bs.textContent = `These students are not eligible for the selected sport combination: ${ineligible.join(", ")}`;
+    bs.className = "status error";
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Create ${selected.length} sports-interest response${selected.length===1?"":"s"} with the selected choices?`
+  );
+  if(!confirmed) return;
+
+  const button = document.getElementById("createBulkResponses");
+  button.disabled = true;
+  button.textContent = "Creating...";
+  bs.textContent = `Creating ${selected.length} response${selected.length===1?"":"s"}...`;
+  bs.className = "status ok";
+
+  try{
+    for(const name of selected){
+      const meta = rosterMeta[name];
+      const parts = splitRosterName(name);
+      const sports = secondSport ? [firstSport, secondSport] : [firstSport];
+
+      await addDoc(collection(db, "season2SportsInterest"), {
+        studentName: name,
+        studentFirstName: parts.first,
+        studentLastName: parts.last,
+        grade: String(meta.grade),
+        gender: meta.gender,
+        teacher: "",
+        sports,
+        firstChoice: firstSport,
+        secondChoice: secondSport || "",
+        likelihood,
+        experience: "",
+        willingToTryNewSport: "",
+        comments: "Bulk-added by administrator",
+        submittedAt: serverTimestamp(),
+        source: "admin-bulk-entry-2026"
+      });
+    }
+
+    bs.textContent = `Created ${selected.length} response${selected.length===1?"":"s"} successfully.`;
+    bs.className = "status ok";
+    await loadResponses();
+
+  }catch(err){
+    console.error(err);
+    bs.textContent = "Could not create the responses. Check Firestore permissions.";
+    bs.className = "status error";
+  }finally{
+    button.disabled = false;
+    button.textContent = "Create Responses";
+  }
+});
+
+
+loadRosterSetup();
   }catch(err){
     console.error(err);
     rs.textContent = "Could not save roster setup. Check Firestore rules.";
