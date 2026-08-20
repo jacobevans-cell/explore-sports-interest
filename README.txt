@@ -72,13 +72,7 @@ V6 BULK RESPONSE ENTRY
 - You can also assign one first choice plus one second choice to the whole selected batch.
 
 
-V7 ONE-CLICK BULK ENTRY
-- Create Responses now also saves the selected Grade and Gender automatically.
-- You no longer need to click Apply to Selected first.
-- Workflow:
-  1. Check all desired students.
-  2. Choose Assign grade.
-  3. Choose Boy or Girl.
-  4. Choose first-choice sport (and optional second choice).
-  5. Click Create Responses.
-- A visible alert appears if required information is missing or a student is ineligible.
+V8 VERIFIED BULK FIX
+- Rebuilt the entire roster save + bulk response section.
+- Verified JavaScript syntax with Node.
+- Create Responses now saves grade/gender and creates one Firestore document for every checked student.

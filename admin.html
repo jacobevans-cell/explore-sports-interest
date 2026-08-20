@@ -290,8 +290,7 @@ tr:last-child td{border-bottom:0}
     <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
       <h2 style="font-size:17px;margin-bottom:8px">Bulk Add Interest Responses</h2>
       <p class="intro">
-        Select as many students as you want. Choose <strong>Assign grade</strong> and <strong>Boy/Girl</strong> above,
-        choose their sport below, then click <strong>Create Responses</strong>. You do NOT have to click Apply to Selected first.
+        Select multiple students above, choose Assign grade + Boy/Girl, choose the sport, then click Create Responses. One record is created per selected student.
       </p>
 
       <div class="controls" style="grid-template-columns:1.4fr 1.4fr 1fr auto">
@@ -492,6 +491,7 @@ document.getElementById("selectVisibleRoster").addEventListener("click", () => {
   checks.forEach(cb => cb.checked = shouldCheck);
 });
 
+
 document.getElementById("saveRosterBatch").addEventListener("click", async () => {
   const selected = [...document.querySelectorAll(".rosterCheck:checked")].map(cb => cb.value);
   const gradeVal = document.getElementById("bulkGrade").value;
@@ -501,32 +501,48 @@ document.getElementById("saveRosterBatch").addEventListener("click", async () =>
   if(!selected.length){
     rs.textContent = "Select at least one student.";
     rs.className = "status error";
+    rs.style.display = "block";
     return;
   }
+
   if(!gradeVal && !genderVal){
     rs.textContent = "Choose a grade, a gender, or both to apply.";
     rs.className = "status error";
+    rs.style.display = "block";
     return;
   }
 
-  rs.textContent = `Saving ${selected.length} student${selected.length===1?"":"s"}...`;
-  rs.className = "status ok";
-
   try{
+    rs.textContent = `Saving ${selected.length} student${selected.length===1?"":"s"}...`;
+    rs.className = "status ok";
+    rs.style.display = "block";
+
     for(const name of selected){
       const existing = rosterMeta[name] || {};
       const source = STATIC_ROSTER.find(s => s.name === name) || {};
-      const payload = {
-        name,
-        division: source.division || existing.division || "",
-        grade: gradeVal || existing.grade || "",
-        gender: genderVal || existing.gender || ""
-      };
-      await setDoc(doc(db,"sportsRoster",rosterId(name)),payload,{merge:true});
+      await setDoc(
+        doc(db,"sportsRoster",rosterId(name)),
+        {
+          name,
+          division: source.division || existing.division || "",
+          grade: gradeVal || existing.grade || "",
+          gender: genderVal || existing.gender || ""
+        },
+        {merge:true}
+      );
     }
+
     rs.textContent = `Saved ${selected.length} student${selected.length===1?"":"s"}.`;
     rs.className = "status ok";
-    await 
+    await loadRosterSetup();
+
+  }catch(err){
+    console.error(err);
+    rs.textContent = "Could not save roster setup. Check Firestore rules.";
+    rs.className = "status error";
+  }
+});
+
 function sportEligible(meta, sport){
   const grade = Number(meta.grade || 0);
   const gender = String(meta.gender || "");
@@ -534,12 +550,15 @@ function sportEligible(meta, sport){
   if(sport === "IYAC Coed Flag Football - Grades 5-8"){
     return grade >= 5 && grade <= 8;
   }
+
   if(sport === "CAA Boys Volleyball"){
     return gender === "Boy" && grade >= 4 && grade <= 8;
   }
+
   if(sport === "CAA Girls Flag Football - Grades 4-5"){
     return gender === "Girl" && grade >= 4 && grade <= 5;
   }
+
   if([
     "Internal Esports Mario Kart - Grades 4-8",
     "Internal Esports Smash Bros - Grades 4-8",
@@ -547,6 +566,7 @@ function sportEligible(meta, sport){
   ].includes(sport)){
     return grade >= 4 && grade <= 8;
   }
+
   return false;
 }
 
@@ -564,19 +584,18 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
   const secondSport = document.getElementById("bulkSecondSport").value;
   const likelihood = document.getElementById("bulkLikelihood").value;
 
-  // These top controls can now be used as part of the same one-click bulk workflow.
   const assignmentGrade = document.getElementById("bulkGrade").value;
   const assignmentGender = document.getElementById("bulkGender").value;
 
   const bs = document.getElementById("bulkResponseStatus");
   const button = document.getElementById("createBulkResponses");
 
-  function fail(msg){
+  const fail = (msg) => {
     bs.textContent = msg;
     bs.className = "status error";
     bs.style.display = "block";
-    window.alert(msg);
-  }
+    alert(msg);
+  };
 
   if(!selected.length){
     fail("Select at least one student first.");
@@ -593,27 +612,23 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
     return;
   }
 
-  // Build the final metadata for each selected student.
-  // A grade/gender chosen in the bulk assignment controls overrides or fills
-  // any missing value, so Apply to Selected is no longer required first.
   const finalMeta = {};
-  const stillMissing = [];
+  const missing = [];
 
   selected.forEach(name => {
     const existing = rosterMeta[name] || {};
-    const merged = {
+    finalMeta[name] = {
       grade: assignmentGrade || existing.grade || "",
       gender: assignmentGender || existing.gender || ""
     };
-    finalMeta[name] = merged;
-    if(!merged.grade || !merged.gender) stillMissing.push(name);
+
+    if(!finalMeta[name].grade || !finalMeta[name].gender){
+      missing.push(name);
+    }
   });
 
-  if(stillMissing.length){
-    fail(
-      "Grade and gender are required before creating records. " +
-      "Choose Assign grade and Boy/Girl at the top, then click Create Responses again."
-    );
+  if(missing.length){
+    fail("Choose Assign grade and Boy/Girl at the top before creating the records.");
     return;
   }
 
@@ -625,25 +640,17 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
   });
 
   if(ineligible.length){
-    fail(
-      "These selected students are not eligible for the sport choice: " +
-      ineligible.join(", ")
-    );
+    fail("These students are not eligible for the selected sport: " + ineligible.join(", "));
     return;
   }
 
-  const confirmed = window.confirm(
-    `Create ${selected.length} response${selected.length===1?"":"s"}?\n\n` +
-    `Grade: ${assignmentGrade || "saved grade"}\n` +
-    `Gender: ${assignmentGender || "saved gender"}\n` +
-    `First choice: ${cleanSport(firstSport)}` +
-    (secondSport ? `\nSecond choice: ${cleanSport(secondSport)}` : "")
-  );
-  if(!confirmed) return;
+  if(!confirm(`Create ${selected.length} response${selected.length===1?"":"s"}?`)){
+    return;
+  }
 
   button.disabled = true;
   button.textContent = "Creating...";
-  bs.textContent = `Saving roster info and creating ${selected.length} response${selected.length===1?"":"s"}...`;
+  bs.textContent = `Creating ${selected.length} response${selected.length===1?"":"s"}...`;
   bs.className = "status ok";
   bs.style.display = "block";
 
@@ -652,22 +659,21 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
       const source = STATIC_ROSTER.find(s => s.name === name) || {};
       const meta = finalMeta[name];
 
-      // Save/refresh roster metadata automatically.
       await setDoc(
-        doc(db, "sportsRoster", rosterId(name)),
+        doc(db,"sportsRoster",rosterId(name)),
         {
           name,
           division: source.division || "",
           grade: String(meta.grade),
           gender: meta.gender
         },
-        { merge: true }
+        {merge:true}
       );
 
       const parts = splitRosterName(name);
       const sports = secondSport ? [firstSport, secondSport] : [firstSport];
 
-      await addDoc(collection(db, "season2SportsInterest"), {
+      await addDoc(collection(db,"season2SportsInterest"), {
         studentName: name,
         studentFirstName: parts.first,
         studentLastName: parts.last,
@@ -695,21 +701,10 @@ document.getElementById("createBulkResponses").addEventListener("click", async (
 
   }catch(err){
     console.error(err);
-    fail(
-      "Could not create the records. Make sure the updated firestore.rules file from this ZIP is published."
-    );
+    fail("Could not create records. Make sure the updated Firestore rules are published.");
   }finally{
     button.disabled = false;
     button.textContent = "Create Responses";
-  }
-});
-
-
-loadRosterSetup();
-  }catch(err){
-    console.error(err);
-    rs.textContent = "Could not save roster setup. Check Firestore rules.";
-    rs.className = "status error";
   }
 });
 
