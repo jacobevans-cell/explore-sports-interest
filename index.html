@@ -313,6 +313,24 @@ button.secondary{background:#ece9f0;color:#4b4056}
       <h2>Sports Interest</h2>
       <p class="intro">Select every sport you would genuinely consider playing.</p>
 
+      <div id="allGradesSection">
+        <div class="group-title">All Grades • Coed</div>
+        <div class="sports">
+          <label class="sport" data-gender="coed">
+            <input type="checkbox" name="sports" value="Esports Mario Kart - All Grades">
+            <span><strong>Esports: Mario Kart</strong><small>Grades 4–8 • Coed</small></span>
+          </label>
+          <label class="sport" data-gender="coed">
+            <input type="checkbox" name="sports" value="Esports Smash Bros - All Grades">
+            <span><strong>Esports: Smash Bros.</strong><small>Grades 4–8 • Coed</small></span>
+          </label>
+          <label class="sport" data-gender="coed">
+            <input type="checkbox" name="sports" value="Chess - All Grades">
+            <span><strong>Chess</strong><small>Grades 4–8 • Coed</small></span>
+          </label>
+        </div>
+      </div>
+
       <div id="elementarySection">
         <div class="group-title">Elementary Season 2</div>
         <div class="sports">
@@ -338,8 +356,6 @@ button.secondary{background:#ece9f0;color:#4b4056}
           <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="7v7 Passing League - JH"><span><strong>7v7 Passing League</strong><small>Junior High</small></span></label>
           <label class="sport" data-gender="boy"><input type="checkbox" name="sports" value="Boys Tennis - JH"><span><strong>Boys Tennis</strong><small>Junior High</small></span></label>
           <label class="sport" data-gender="girl"><input type="checkbox" name="sports" value="Girls Tennis - JH"><span><strong>Girls Tennis</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="Esports Mario Kart - JH"><span><strong>Esports: Mario Kart</strong><small>Junior High</small></span></label>
-          <label class="sport" data-gender="coed"><input type="checkbox" name="sports" value="Esports Smash Bros - JH"><span><strong>Esports: Smash Bros.</strong><small>Junior High</small></span></label>
         </div>
       </div>
 
@@ -498,7 +514,8 @@ function updateGradeSections(){
       allowed === "coed" ||
       allowed === selectedGender;
 
-    const sectionHidden = card.closest("#elementarySection, #jhSection")?.classList.contains("hidden");
+    const gradeSection = card.closest("#elementarySection, #jhSection");
+    const sectionHidden = gradeSection ? gradeSection.classList.contains("hidden") : false;
     card.classList.toggle("hidden", !genderMatch);
 
     const cb = card.querySelector('input[name="sports"]');

@@ -482,7 +482,7 @@ function exportCSV(){
 }
 
 function cleanSport(s){
-  return String(s||"").replace(" - JH","").replace(" - Elementary","");
+  return String(s||"").replace(" - JH","").replace(" - Elementary","").replace(" - All Grades","");
 }
 function escapeHtml(v){
   return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));

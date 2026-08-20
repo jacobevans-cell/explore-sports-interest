@@ -41,3 +41,8 @@ Gender eligibility
 - 7v7 Passing League is currently configured as coed.
 - Esports Mario Kart and Smash Bros are configured as coed.
 - Grade 6 can see both Elementary and Junior High categories when applicable.
+
+All-grade activities
+- Esports: Mario Kart is available to grades 4–8 and is coed.
+- Esports: Smash Bros. is available to grades 4–8 and is coed.
+- Chess is available to grades 4–8 and is coed.
