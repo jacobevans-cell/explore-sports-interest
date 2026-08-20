@@ -6,7 +6,8 @@ service cloud.firestore {
     match /season2SportsInterest/{responseId} {
       allow create: if request.auth != null;
       allow read: if true;
-      allow update, delete: if false;
+      allow delete: if true;
+      allow update: if false;
     }
 
   }

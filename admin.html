@@ -189,6 +189,7 @@ tr:last-child td{border-bottom:0}
     <div class="header-actions">
       <button id="refreshBtn" class="btn-ghost">Refresh</button>
       <button id="exportBtn" class="btn-light">Export CSV</button>
+      <button id="clearAllBtn" class="btn-ghost" style="border-color:rgba(255,160,160,.55)">Clear All Responses</button>
       
     </div>
     <div id="userLine" class="userline"></div>
@@ -292,7 +293,7 @@ tr:last-child td{border-bottom:0}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, query, orderBy
+  getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
@@ -315,6 +316,7 @@ const dashboard = document.getElementById("dashboard");
 const status = document.getElementById("status");
 const refreshBtn = document.getElementById("refreshBtn");
 const exportBtn = document.getElementById("exportBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
 
 
 document.getElementById("loginCard").style.display = "none";
@@ -322,6 +324,7 @@ document.getElementById("dashboard").style.display = "block";
 refreshBtn.style.display = "";
 exportBtn.style.display = "";
 exportBtn.addEventListener("click", exportCSV);
+clearAllBtn.addEventListener("click", clearAllResponses);
 loadResponses();
 
 async function loadResponses(){
@@ -459,6 +462,72 @@ document.getElementById("clearFilters").addEventListener("click",()=>{
   document.getElementById("sportFilter").value="";
   renderTable();
 });
+
+
+async function clearAllResponses(){
+  const typed = window.prompt(
+    'This will permanently delete EVERY sports-interest response.\n\nType DELETE ALL RESPONSES exactly to continue.'
+  );
+
+  if(typed !== "DELETE ALL RESPONSES"){
+    status.textContent = "Clear cancelled. No responses were deleted.";
+    status.className = "status error";
+    return;
+  }
+
+  const finalConfirm = window.confirm(
+    "Final confirmation: permanently delete ALL responses from Firestore?"
+  );
+
+  if(!finalConfirm){
+    status.textContent = "Clear cancelled. No responses were deleted.";
+    status.className = "status error";
+    return;
+  }
+
+  clearAllBtn.disabled = true;
+  clearAllBtn.textContent = "Deleting...";
+  status.textContent = "Deleting all responses...";
+  status.className = "status ok";
+
+  try{
+    const snap = await getDocs(collection(db, "season2SportsInterest"));
+
+    if(snap.empty){
+      allResponses = [];
+      renderAll();
+      status.textContent = "The database is already empty.";
+      status.className = "status ok";
+      return;
+    }
+
+    const docs = snap.docs;
+
+    // Delete in modest chunks to avoid hammering the browser/network.
+    const chunkSize = 25;
+    for(let i = 0; i < docs.length; i += chunkSize){
+      const chunk = docs.slice(i, i + chunkSize);
+      await Promise.all(
+        chunk.map(d => deleteDoc(doc(db, "season2SportsInterest", d.id)))
+      );
+    }
+
+    allResponses = [];
+    renderAll();
+
+    status.textContent = `Deleted ${docs.length} response${docs.length === 1 ? "" : "s"}. The database is now empty.`;
+    status.className = "status ok";
+
+  }catch(err){
+    console.error("Clear-all error:", err);
+    status.textContent =
+      "Could not delete the responses. Check that the updated Firestore rules were published.";
+    status.className = "status error";
+  }finally{
+    clearAllBtn.disabled = false;
+    clearAllBtn.textContent = "Clear All Responses";
+  }
+}
 
 function exportCSV(){
   try {

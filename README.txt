@@ -36,3 +36,12 @@ New responses will use the corrected sport names and include firstChoice and sec
 
 GITHUB
 Replace index.html and admin.html in the repository root.
+
+
+CLEAR ALL RESPONSES BUTTON
+- admin.html now includes a Clear All Responses button.
+- It requires typing: DELETE ALL RESPONSES
+- It then requires a second browser confirmation.
+- The included firestore.rules allows deletes from the season2SportsInterest collection.
+- IMPORTANT: Because the dashboard is not login-protected, delete access is also not identity-restricted. The typed confirmation prevents accidents but is not true access control.
+- Publish the updated firestore.rules before using the clear button.
